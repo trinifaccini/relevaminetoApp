@@ -1,0 +1,36 @@
+/* Hacer que el fondo de la página sea negro */
+.container {
+  margin: 0;
+  height: 100vh; /* Ocupa toda la altura de la ventana */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+h1 {
+  color: black;
+  font-family: "HalfTerm"; 
+
+}
+
+
+@keyframes grow {
+  0% {
+    transform: scale(1); /* Inicia desde tamaño 0 (invisible) */
+    opacity: 0;          /* Transparente al inicio */
+  }
+  50% {
+    opacity: 1;          /* A mitad de camino es completamente visible */
+  }
+  100% {
+    transform: scale(0); /* Termina en su tamaño original */
+    opacity: 1;
+  }
+}
+
+.animateSplash {
+  margin-top: 20px;
+  animation: grow 3s ease-out forwards;
+}
