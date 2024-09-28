@@ -20,7 +20,7 @@
         <item name="android:background">@drawable/splash</item>
     </style>
 
-    
+
     <style name="Theme.MyApp.Launcher" parent="Theme.SplashScreen">
          <item name="android:windowSplashScreenBackground">@color/orange_brown</item> <!-- Fondo de la splash -->
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_logo</item> <!-- Ícono o imagen animada -->

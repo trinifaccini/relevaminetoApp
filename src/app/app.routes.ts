@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { LoginPage } from './pages/login/login.page';
-import { HomePage } from './pages/home/home.page';
 import { SplashPage } from './pages/splash/splash.page';
 import { GamePage } from './pages/juego/juego.page';
 
@@ -14,10 +13,6 @@ export const routes: Routes = [
   {
     path: "splash",
     component: SplashPage,
-  },
-  {
-      path: "home",
-      component: HomePage,
   },
   {
     path: "login",

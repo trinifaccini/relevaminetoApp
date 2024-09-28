@@ -9,10 +9,6 @@ ion-content {
   justify-content: center;
   height: 100%;
   text-align: center;
-  background-image: url('../../../assets/img/background.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
 
   img {
     max-width: 80%;

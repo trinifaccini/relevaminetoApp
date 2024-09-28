@@ -1,71 +1,68 @@
+
 .login-content {
-    /* background-image: url('../../../assets/img/background.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;  */
     display: flex;
     flex-direction: column;
     justify-content: start;
     align-items: center;
     text-align: center;
-  
-    .logo-container {
-      padding-top: 40px;
-      margin-bottom: 40px;
-  
-      .logo {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        margin-bottom: 10px;
-      }
-  
-      h1 {
-        font-family: 'Poppins', sans-serif;
-        font-size: 24px;
-        font-weight: bold;
-        color: #000;
-        letter-spacing: 0.05em;
-        font-family: "HalfTerm";
-      }
-    }
+    height: 100vh;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #000;
+  letter-spacing: 0.05em;
+  font-family: "Kanit";
+  margin-bottom: 30px;
+  padding-top: 70px
+}
+    
   
     form {
       width: 80%;
-      font-family: "HalfTerm";
+      font-family: "Kanit";
       
       ion-item {
         --background: rgb(245, 249, 250);
         border-radius: 8px;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
+        --border-style: none
+
 
         ion-label {
           color: #000;
-          font-weight: bold;
-          font-family: "HalfTerm";
-
+          font-family: "Kanit";
         }
+
+        align-content: center;
   
         ion-input {
           --placeholder-color: rgba(0, 0, 0, 0.479);
           color: black;
-          font-family: "HalfTerm";
+          font-family: "Kanit";
 
         }
       }
   
-      ion-button {
-        color: warn;
-        border-radius: 8px;
-      }
+
     }
   
-    .forgot-password {
-      margin-top: 10px;
-      color: rgba(0, 0, 0, 0.7);
-      text-decoration: none;
-      font-size: 14px;
+
+      .custom-button {
+        --background: #CDE7B0;  /* Morado */
+        --color: #59594A;         /* Texto blanco */
+        --background-activated: #A3BFA8; /* Color de fondo cuando se presiona */
+      }
+    
+
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      flex-direction: column;
+
     }
-  }
+
+
+  
   
