@@ -54,6 +54,12 @@ h1 {
         --color: #59594A;         /* Texto blanco */
         --background-activated: #A3BFA8; /* Color de fondo cuando se presiona */
       }
+
+      .button-login {
+        --background: #b1c819;  /* Morado */
+        --color: #59594A;         /* Texto blanco */
+        --background-activated: #73b47f; /* Color de fondo cuando se presiona */
+      }
     
 
     .buttons {

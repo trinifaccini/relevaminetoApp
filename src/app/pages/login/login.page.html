@@ -18,14 +18,23 @@
       </ion-item>
 
       <div class="buttons">
-        <ion-button class="custom-button" expand="block" type="submit"  [disabled]="loginForm.invalid">
-          Iniciar sesión
-        </ion-button>
         <ion-button class="custom-button" expand="block" type="button"  (click)="autocompleCredentials(0)">
-          Ingreso rápido
+          Ingreso rápido 1
+        </ion-button>
+
+        <ion-button class="custom-button" expand="block" type="button"  (click)="autocompleCredentials(1)">
+          Ingreso rápido 2
+        </ion-button>
+
+        <ion-button class="custom-button" expand="block" type="button"  (click)="autocompleCredentials(2)">
+          Ingreso rápido 3
         </ion-button>
 
       </div>
+
+      <ion-button class="button-login" expand="block" type="submit"  [disabled]="loginForm.invalid">
+        Iniciar sesión
+      </ion-button>
      
     </form>
 
