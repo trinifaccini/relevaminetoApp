@@ -1,11 +1,11 @@
 <ion-list class="lista-imagenes">
-  <ion-item *ngFor="let image of images; let i = index" lines="none" class="custom-item">
-    <div class="imagen-contenedor">
+<ion-item *ngFor="let image of images; let i = index" lines="none" class="custom-item">
+  <div class="imagen-contenedor">
       <ion-thumbnail class="imagen-grande">
         <img [src]="image.url" alt="Image {{ i + 1 }}">
       </ion-thumbnail>
       <div class="contenido-debajo">
-        <ion-label style="font-family: Kanit; ">
+        <ion-label>
           <h2>Imagen {{ i + 1 }}</h2>
         </ion-label>
         <ion-button fill="clear" (click)="toggleLike(image)">

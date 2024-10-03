@@ -3,7 +3,7 @@ import { LoginPage } from './pages/login/login.page';
 import { SplashPage } from './pages/splash/splash.page';
 import { GamePage } from './pages/inicio/juego.page';
 import { SubidaPage } from './pages/subida/subida.page';
-import { ListadoImagenesPage } from './pages/listado-imagenes/listado-imagenes.page';
+import { LikesChartComponent } from './components/graficos-likes/graficos-likes.component';
 
 export const routes: Routes = [
 
@@ -27,6 +27,10 @@ export const routes: Routes = [
   {
     path: "subida/:categoria",
     component: SubidaPage,
+  },
+  {
+    path: "graficos",
+    component: LikesChartComponent,
   },
   { 
       path: '**', 

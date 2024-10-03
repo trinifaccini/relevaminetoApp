@@ -7,6 +7,9 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { HttpClientModule } from '@angular/common/http';
+import { provideStorage, getStorage } from '@angular/fire/storage';
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+
 import { IonicModule } from '@ionic/angular';
 
 
@@ -27,7 +30,9 @@ export const appConfig = {
     provideAnimationsAsync('noop'),
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideAuth(() => getAuth()),
+    provideStorage(() => getStorage()),
     importProvidersFrom(IonicModule.forRoot()), // Proveer HttpClientModule
+    provideFirestore(() => getFirestore()),
     importProvidersFrom(HttpClientModule), provideAnimationsAsync('noop'), provideAnimationsAsync('noop') // Proveer HttpClientModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
