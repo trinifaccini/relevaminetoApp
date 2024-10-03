@@ -74,7 +74,7 @@ export class LoginPage implements OnInit, OnDestroy {
     .subscribe(
       {
         next: () => {
-          this.router.navigateByUrl('/game')
+          this.router.navigateByUrl('/inicio')
           this.loginForm.reset();
 
         },

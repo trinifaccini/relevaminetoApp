@@ -1,0 +1,31 @@
+ion-content {
+  --background: #CDE7B0;
+}
+
+.game-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  height: 100%;
+  width: 100%;
+
+    .img-button {/* Ajusta la ruta según la ubicación de tu imagen */
+      background-size: cover; /* Asegura que la imagen cubra todo el botón */
+      background-repeat: no-repeat; /* Evita que la imagen se repita */
+      border: none; /* Elimina el borde del botón */
+      color: white; /* Cambia el color del texto según sea necesario */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px; /* Cambia el tamaño de la fuente según sea necesario */
+      width: 95%;
+      height: 47%;
+      border-radius: 20%;
+
+    }
+
+
+
+  }
+

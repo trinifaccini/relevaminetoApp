@@ -35,12 +35,19 @@ export class GamePage implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-    console.log('On init GAME');
+    console.log('On init INICIO');
 
   }
 
   ngOnDestroy() {
-    console.log('On destroy GAME');
+    console.log('On destroy INICIO');
   }
+
+
+  redirect(page): void {
+    this.authService.logout();
+    this.router.navigate([`/subida/${page}`]);
+  }
+
 
 }

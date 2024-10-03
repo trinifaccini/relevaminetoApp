@@ -1,0 +1,27 @@
+ion-content {
+  --background: #CDE7B0;
+}
+
+.main-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  margin-top: 20px;
+
+
+  .buttons {
+
+    display: flex;
+    width: 95%;
+
+    /* customizar botones */
+
+  }
+
+  
+
+  
+}
+

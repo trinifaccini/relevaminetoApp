@@ -1,7 +1,9 @@
 import { Routes } from '@angular/router';
 import { LoginPage } from './pages/login/login.page';
 import { SplashPage } from './pages/splash/splash.page';
-import { GamePage } from './pages/juego/juego.page';
+import { GamePage } from './pages/inicio/juego.page';
+import { SubidaPage } from './pages/subida/subida.page';
+import { ListadoImagenesPage } from './pages/listado-imagenes/listado-imagenes.page';
 
 export const routes: Routes = [
 
@@ -19,8 +21,12 @@ export const routes: Routes = [
     component: LoginPage,
   },
   {
-    path: "game",
+    path: "inicio",
     component: GamePage,
+  },
+  {
+    path: "subida/:categoria",
+    component: SubidaPage,
   },
   { 
       path: '**', 

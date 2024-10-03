@@ -1,0 +1,39 @@
+.lista-imagenes{
+  width: 95vw;
+  background: transparent;
+  /* background-color: blue; */
+}
+
+ion-item {
+  --background: white;
+  --ion-item-background: transparent;
+  --box-shadow: none;
+  margin-bottom: 10px;
+}
+
+.imagen-contenedor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 10px;
+  /* background-color: red; */
+}
+
+.imagen-grande {
+  width: 100%; /* Ajusta el tamaño según tu preferencia */
+  height: 100%;
+  margin-bottom: 10px;
+}
+
+.contenido-debajo {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Kanit';
+}
+
+.contenido-debajo ion-button {
+  margin-top: 5px;
+}
