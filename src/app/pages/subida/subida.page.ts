@@ -5,6 +5,7 @@ import { AuthService } from '../../services/auth.service';
 import { LoginPage } from '../login/login.page';4
 import { IonicModule } from '@ionic/angular';
 import { ListadoImagenesComponent } from 'src/app/components/listado-imagenes/listado-imagenes.component';
+import { UploadComponent } from 'src/app/components/subida-imagenes/subida-imagenes.component';
 
 
 @Component({
@@ -16,7 +17,8 @@ import { ListadoImagenesComponent } from 'src/app/components/listado-imagenes/li
     LoginPage,
     CommonModule, 
     IonicModule,
-    ListadoImagenesComponent
+    ListadoImagenesComponent,
+    UploadComponent
   ],
   templateUrl: './subida.page.html',
   styleUrl: './subida.page.css',
