@@ -40,17 +40,19 @@ export class SubidaPage implements OnInit, OnDestroy {
   // }
 
   ngOnInit() {
-    console.log('On init SUBIDA');
+    console.log('On init SUBIDA PAGE');
     this.categoria = this.route.snapshot.paramMap.get('categoria') || '';
   }
 
   ngOnDestroy() {
-    console.log('On destroy SUBIDA');
+    console.log('On destroy SUBIDA PAGE');
   }
 
   navegar(pagina) {
 
-    this.router.navigate([`/${pagina}/${this.categoria}`]);
+    this.router.navigate([`/${pagina}/${this.categoria}`], { replaceUrl: true });
+
+
     
   }
 

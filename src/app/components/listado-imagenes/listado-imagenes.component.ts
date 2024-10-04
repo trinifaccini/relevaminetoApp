@@ -36,25 +36,20 @@ export class ListadoImagenesComponent implements OnInit, OnDestroy {
   constructor(private firestore: Firestore, private authService: AuthService) {}
 
   ngOnInit() {
-    console.log("ngOnInit ejecutado en ListadoImagenesComponent");
-  
-    this.userIdSubscription = this.authService.getCurrentUserId().subscribe(userId => {
-      if (userId) {
-        console.log('User ID:', userId);
-        this.userId = userId;
-        this.loadImages();
-      } else {
-        console.log('No user authenticated or userId is null:', userId);
-        setTimeout(() => {
-          console.log('Still no user authenticated');
-        }, 1000);
-      }
-    });
+    console.log("ON INIT LISTADO IMAGENES COMPONENT");
+
+    this.userId = this.authService.getCurrentUserId(); // Obtiene el userId de forma inmediata
+    this.loadImages();
+    // if (this.userId) {
+    //   console.log('User ID:', this.userId);
+    //   this.loadImages();
+    // }
+
   }
 
   ngOnDestroy() {
 
-    console.log("DESTRUYENDO LISTADO IMAGENES");
+    console.log("ON DESTROY  LISTADO IMAGENES COMPONENT");
     
     if (this.userIdSubscription) {
       this.userIdSubscription.unsubscribe();

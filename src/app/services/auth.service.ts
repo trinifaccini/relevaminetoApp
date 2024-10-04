@@ -1,31 +1,39 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   Auth,
   signInWithEmailAndPassword,
   user,
   signOut
 } from '@angular/fire/auth';
-import { Observable, from } from 'rxjs';
+import { Observable, from, BehaviorSubject } from 'rxjs';
 import { UserInterface } from '../models/user.interface';
-import { filter, map } from 'rxjs/operators';
+import { map, filter } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
-
 export class AuthService {
 
-  firebaseAuth = inject(Auth);
-  user$ = user(this.firebaseAuth);
-  currentUserSig = signal<UserInterface | null | undefined>(undefined);
+  private firebaseAuth = inject(Auth);
+
+  // Usamos BehaviorSubject para emitir el userId
+  private userIdSubject = new BehaviorSubject<string | null>(null);
+  private userId$ = this.userIdSubject.asObservable();
 
   constructor() {
-    // Suscribimos el signal a los cambios en el usuario
-    this.user$.subscribe(user => {
-      this.currentUserSig.set(user ? { uid: user.uid, email: user.email } : null);
-    });    
+    // Suscribimos el signal a los cambios en el usuario de Firebase
+    user(this.firebaseAuth).subscribe((firebaseUser) => {
+      if (firebaseUser) {
+        // Emitimos el userId cuando el usuario está autenticado
+        this.userIdSubject.next(firebaseUser.uid);
+      } else {
+        // Emitimos null si no hay usuario autenticado
+        this.userIdSubject.next(null);
+      }
+    });
   }
 
+  // Método para iniciar sesión con correo electrónico y contraseña
   login(email: string, password: string): Observable<void> {
     const promise = signInWithEmailAndPassword(this.firebaseAuth, email, password)
       .then(() => {})
@@ -37,6 +45,7 @@ export class AuthService {
     return from(promise);
   }
 
+  // Método para cerrar sesión
   logout(): Observable<void> {
     const promise = signOut(this.firebaseAuth)
       .then(() => {})
@@ -48,14 +57,13 @@ export class AuthService {
     return from(promise);
   }
 
-  getCurrentUserId(): Observable<string | null> {
-    return this.user$.pipe(
-      map(user => user?.uid || null),
-      filter(uid => uid !== null) // Filtrar valores nulos
-    );
+  // Método para obtener el userId como un Observable reactivo
+  getUserId(): Observable<string | null> {
+    return this.userId$;
   }
-  
-  
-  
 
+  // Método para obtener el valor actual del userId sin necesidad de suscribirse
+  getCurrentUserId(): string | null {
+    return this.userIdSubject.getValue();
+  }
 }

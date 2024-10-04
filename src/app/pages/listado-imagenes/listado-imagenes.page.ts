@@ -31,12 +31,23 @@ export class ListadoImagenesPage implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-    console.log('On init LISTADO PROPIO');
+    console.log('On init LISTADO PROPIO PAGE');
     this.categoria = this.route.snapshot.paramMap.get('categoria') || '';    
   }
 
   ngOnDestroy() {
-    console.log('On destroy LISTADO PROPIO');
+    console.log('On destroy LISTADO PROPIO PAGE ');
+  }
+
+
+  ionViewWillEnter() {
+    console.log("Página activada LISTADO PROPIO");
+    // Aquí puedes cargar los datos o hacer cualquier lógica que necesites al entrar en la página
+  }
+
+  ionViewWillLeave() {
+    console.log("Página desactivada LISTADO PROPIO");
+    // Aquí puedes limpiar cualquier recurso o cancelar suscripciones
   }
 
 }
