@@ -24,10 +24,6 @@ export class UploadComponent {
   constructor(private firestore: Firestore, private auth: Auth) {
     this.userId = this.auth.currentUser?.uid || ''; // Obtén el ID del usuario autenticado
     this.getUserName(); // Llamamos al método para obtener el nombre del usuario
-
-    console.log(this.auth.currentUser?.uid);
-
-  
   }
 
   // Método para obtener el nombre del usuario desde Firestore

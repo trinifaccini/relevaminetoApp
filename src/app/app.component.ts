@@ -52,7 +52,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
 
-
   shouldShowToolbar(): boolean {
     return this.router.url !== '/splash';
   }

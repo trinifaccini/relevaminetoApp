@@ -4,6 +4,8 @@ import { SplashPage } from './pages/splash/splash.page';
 import { GamePage } from './pages/inicio/juego.page';
 import { SubidaPage } from './pages/subida/subida.page';
 import { LikesChartComponent } from './components/graficos-likes/graficos-likes.component';
+import { ListadoImagenesPage } from './pages/listado-imagenes/listado-imagenes.page';
+import { SubirImagenesPage } from './pages/subirImagenes/subir-imagenes.page';
 
 export const routes: Routes = [
 
@@ -29,12 +31,20 @@ export const routes: Routes = [
     component: SubidaPage,
   },
   {
-    path: "graficos",
+    path: "subirImagenes/:categoria",
+    component: SubirImagenesPage,
+  },
+  {
+    path: "graficos/:categoria",
     component: LikesChartComponent,
   },
+  {
+    path: "listado/:categoria",
+    component: ListadoImagenesPage,
+  },
   { 
-      path: '**', 
-      redirectTo: "home",
+    path: '**', 
+    redirectTo: "home",
   }
 ];
 

@@ -1,15 +1,13 @@
 import { inject, Injectable, signal } from '@angular/core';
 import {
-  Auth, 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
+  Auth,
+  signInWithEmailAndPassword,
   user,
-  updateProfile,
-  signOut,
-  UserCredential} from '@angular/fire/auth';
+  signOut
+} from '@angular/fire/auth';
 import { Observable, from } from 'rxjs';
 import { UserInterface } from '../models/user.interface';
-
+import { filter, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -17,40 +15,47 @@ import { UserInterface } from '../models/user.interface';
 
 export class AuthService {
 
-
   firebaseAuth = inject(Auth);
   user$ = user(this.firebaseAuth);
   currentUserSig = signal<UserInterface | null | undefined>(undefined);
 
-  register(email: string, username: string, password: string): Observable<UserCredential> {
-    const promise = createUserWithEmailAndPassword(this.firebaseAuth, email, password)
-      .then(response => {
-        updateProfile(response.user, { displayName: username });
-        return response;
+  constructor() {
+    // Suscribimos el signal a los cambios en el usuario
+    this.user$.subscribe(user => {
+      this.currentUserSig.set(user ? { uid: user.uid, email: user.email } : null);
+    });    
+  }
+
+  login(email: string, password: string): Observable<void> {
+    const promise = signInWithEmailAndPassword(this.firebaseAuth, email, password)
+      .then(() => {})
+      .catch(error => {
+        console.error("Error during login: ", error);
+        throw error; // Lanzar error para que sea manejado por el suscriptor
       });
+
     return from(promise);
   }
-  
 
-  login(email:string, password:string,): Observable<void> {
-
-    //firebase retorna promesas, pero los convertimos a observables
-
-    const promise = signInWithEmailAndPassword(this.firebaseAuth, email, password)
-    .then(() => {})
-
-    return from(promise)
-
-
-
-  }
-
-  logout() : Observable<void> {
+  logout(): Observable<void> {
     const promise = signOut(this.firebaseAuth)
-    .then(() => {})
+      .then(() => {})
+      .catch(error => {
+        console.error("Error during logout: ", error);
+        throw error; // Lanzar error para que sea manejado por el suscriptor
+      });
 
-    return from(promise)
+    return from(promise);
   }
 
+  getCurrentUserId(): Observable<string | null> {
+    return this.user$.pipe(
+      map(user => user?.uid || null),
+      filter(uid => uid !== null) // Filtrar valores nulos
+    );
+  }
   
+  
+  
+
 }

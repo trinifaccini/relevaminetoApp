@@ -2,7 +2,7 @@
   <ion-toolbar>
     <div style="display: flex; justify-content: space-between;">
       <ion-title>Cosas {{categoria}}</ion-title>
-      <ion-button fill="clear">
+      <ion-button fill="clear" (click)="navegar('subirImagenes')">
         <ion-icon name="cloud-upload"></ion-icon>    
       </ion-button>
     </div>
@@ -11,9 +11,6 @@
 </ion-header>
 
 <ion-content class="fullscreen"  style="--background: linear-gradient(to bottom, #c37b10, #efceb4);">
-
-
-  <app-upload></app-upload>
 
     <!-- Pantalla de Bienvenida -->
   <div class="main-screen">
@@ -24,22 +21,20 @@
 
     <div class="buttons">
 
-        <ion-button>
+        <ion-button (click)="navegar('listado')">
           MIS IMAGENES 
         </ion-button>
   
-        <ion-button>
+        <ion-button (click)="navegar('graficos')">
           GRAFICOS
         </ion-button>
       
     </div>
 
 
-
     <div>
 
-      <listado-imagenes [categoria]="categoria">
-        
+      <listado-imagenes [categoria]="categoria" [user]="user">
       </listado-imagenes>
 
     </div>

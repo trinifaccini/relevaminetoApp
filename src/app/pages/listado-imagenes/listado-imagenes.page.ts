@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit, inject} from '@angular/core';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { IonicModule } from '@ionic/angular';
+import { ListadoImagenesComponent } from 'src/app/components/listado-imagenes/listado-imagenes.component';
 
 
 @Component({
@@ -13,6 +14,7 @@ import { IonicModule } from '@ionic/angular';
     RouterLink,
     CommonModule, 
     IonicModule,
+    ListadoImagenesComponent
   ],
   templateUrl: 'listado-imagenes.page.html',
   styleUrls: ['listado-imagenes.page.css'],
@@ -22,23 +24,19 @@ import { IonicModule } from '@ionic/angular';
 export class ListadoImagenesPage implements OnInit, OnDestroy {
 
   router = inject(Router)
+  route = inject(ActivatedRoute)
 
-  constructor(public authService: AuthService) {}
-
-
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-  }
+  categoria: string;
+  user: boolean = true;
 
 
   ngOnInit() {
-    console.log('On init SUBIDA');
-
+    console.log('On init LISTADO PROPIO');
+    this.categoria = this.route.snapshot.paramMap.get('categoria') || '';    
   }
 
   ngOnDestroy() {
-    console.log('On destroy SUBIDA');
+    console.log('On destroy LISTADO PROPIO');
   }
 
 }

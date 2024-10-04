@@ -1,7 +1,9 @@
+
 export interface UserInterface {
-    email:string,
-    username:string,
-    //name: string,
-    //lastName: string,
-    password: string
+    email:string;
+    // username:string,
+    // //name: string,
+    // //lastName: string,
+    // password: string,
+    uid: string
 }

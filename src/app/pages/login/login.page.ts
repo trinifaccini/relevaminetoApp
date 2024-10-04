@@ -65,8 +65,6 @@ export class LoginPage implements OnInit, OnDestroy {
 
   onSubmit() : void {
 
-    console.log('login');
-
     const rawForm = this.loginForm.getRawValue()
 
     this.authService

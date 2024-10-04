@@ -1,7 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { Firestore, doc, getDoc, setDoc, updateDoc, increment, query, where, getDocs, collection, deleteDoc } from '@angular/fire/firestore';
+import { AuthService } from 'src/app/services/auth.service';
+import { Subscription } from 'rxjs';
+
 
 // src/app/components/image-list/image-list.component.ts
 interface Image {
@@ -22,41 +25,95 @@ interface Image {
 
 
 
-export class ListadoImagenesComponent implements OnInit {
+export class ListadoImagenesComponent implements OnInit, OnDestroy {
   
   @Input() categoria: string = '';
   images: Image[] = [];
+  userId: any;
+  @Input() user: boolean = false;
+  private userIdSubscription: Subscription | undefined;
 
-  constructor(private firestore: Firestore) {}
+  constructor(private firestore: Firestore, private authService: AuthService) {}
 
   ngOnInit() {
-    this.loadImages();
-    console.log(this.categoria)
+    console.log("ngOnInit ejecutado en ListadoImagenesComponent");
+  
+    this.userIdSubscription = this.authService.getCurrentUserId().subscribe(userId => {
+      if (userId) {
+        console.log('User ID:', userId);
+        this.userId = userId;
+        this.loadImages();
+      } else {
+        console.log('No user authenticated or userId is null:', userId);
+        setTimeout(() => {
+          console.log('Still no user authenticated');
+        }, 1000);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+
+    console.log("DESTRUYENDO LISTADO IMAGENES");
+    
+    if (this.userIdSubscription) {
+      this.userIdSubscription.unsubscribe();
+    }
   }
 
   async loadImages() {
-
-    const userId = 'fHdLiJuG2nR3OK3nNJwxs8ecfoj1'; // ID del usuario logueado
-
-
+    
     const imagesCollection = collection(this.firestore, `imagenes-${this.categoria}`);
-    const snapshot = await getDocs(imagesCollection);
 
-    for (const imageDoc of snapshot.docs) {
-      const imageData = imageDoc.data();
+    // si tengo que mostrar las imagenes propias
+    if(this.user === true) {
+      const q = query(imagesCollection, where('userId', '==', this.userId));
+      const snapshot = await getDocs(q);
 
-      // Verificar si el usuario ha dado "like" a esta imagen
-      const likeDocRef = doc(this.firestore, `likes-${this.categoria}/${userId}_${imageDoc.id}`);
-      const likeDocSnap = await getDoc(likeDocRef);
-
-      // Agregar la imagen a la lista, marcándola como "likeada" o no
-      this.images.push({
-        id: imageDoc.id,
-        url: imageData['url'], // Asumiendo que el campo es 'url'
-        liked: likeDocSnap.exists(), // Verificar si existe un "like" en Firestore
-        likesCount: imageData['likesCount'] || 0 // Contador de likes
-      });
+      for (const imageDoc of snapshot.docs) {
+        const imageData = imageDoc.data();
+  
+        // Verificar si el usuario ha dado "like" a esta imagen
+        const likeDocRef = doc(this.firestore, `likes-${this.categoria}/${this.userId}_${imageDoc.id}`);
+        const likeDocSnap = await getDoc(likeDocRef);
+  
+        // Agregar la imagen a la lista, marcándola como "likeada" o no
+        this.images.push({
+          id: imageDoc.id,
+          url: imageData['url'], // Asumiendo que el campo es 'url'
+          liked: likeDocSnap.exists(), // Verificar si existe un "like" en Firestore
+          likesCount: imageData['likesCount'] || 0 // Contador de likes
+        });
+      }
     }
+
+    else {
+
+      console.log("acaaaa")
+      const snapshotTodas = await getDocs(imagesCollection);
+
+      for (const imageDoc of snapshotTodas.docs) {
+
+        const imageData = imageDoc.data();
+
+        // Verificar si el usuario ha dado "like" a esta imagen
+        const likeDocRef = doc(this.firestore, `likes-${this.categoria}/${this.userId}_${imageDoc.id}`);
+        const likeDocSnap = await getDoc(likeDocRef);
+
+        // Agregar la imagen a la lista, marcándola como "likeada" o no
+        this.images.push({
+          id: imageDoc.id,
+          url: imageData['url'], // Asumiendo que el campo es 'url'
+          liked: likeDocSnap.exists(), // Verificar si existe un "like" en Firestore
+          likesCount: imageData['likesCount'] || 0 // Contador de likes
+        });
+    }
+    }
+
+    
+
+
+    
   }
 
 

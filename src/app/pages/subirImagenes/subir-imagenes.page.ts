@@ -9,7 +9,7 @@ import { UploadComponent } from 'src/app/components/subida-imagenes/subida-image
 
 
 @Component({
-  selector: 'subida',
+  selector: 'subirImagenes',
   standalone: true,
   imports: [
     RouterOutlet,
@@ -20,38 +20,26 @@ import { UploadComponent } from 'src/app/components/subida-imagenes/subida-image
     ListadoImagenesComponent,
     UploadComponent
   ],
-  templateUrl: './subida.page.html',
-  styleUrl: './subida.page.css',
+  templateUrl: './subir-imagenes.page.html',
+  styleUrl: './subir-imagenes.page.css',
 })
 
 
-export class SubidaPage implements OnInit, OnDestroy {
+export class SubirImagenesPage implements OnInit, OnDestroy {
 
   router = inject(Router)
   route = inject(ActivatedRoute)
 
   categoria: string;
-  user: boolean = false;
-
-
-  // logout(): void {
-  //   this.authService.logout();
-  //   this.router.navigate(['/login']);
-  // }
 
   ngOnInit() {
-    console.log('On init SUBIDA');
+    console.log('On init SUBIR IMAGENES');
     this.categoria = this.route.snapshot.paramMap.get('categoria') || '';
   }
 
   ngOnDestroy() {
-    console.log('On destroy SUBIDA');
+    console.log('On destroy SUBIR IMAGENES');
   }
 
-  navegar(pagina) {
-
-    this.router.navigate([`/${pagina}/${this.categoria}`]);
-    
-  }
 
 }
