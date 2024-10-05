@@ -31,6 +31,7 @@ export const routes: Routes = [
   {
     path: "subida/:categoria",
     component: SubidaPage,
+    data: { shouldReuse: false }
   },
   {
     path: "subirImagenes/:categoria",

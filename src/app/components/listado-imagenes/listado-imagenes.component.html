@@ -6,9 +6,10 @@
       <ion-thumbnail class="imagen-grande">
         <img [src]="image.url" alt="Image {{ i + 1 }}">
       </ion-thumbnail>
-      <div class="contenido-debajo">
-        <ion-label>
-          <h2>Imagen {{ i + 1 }} Likes: {{ image.likesCount }}</h2>
+      <div class="contenido-debajo" >
+        <ion-label style="display: flex; justify-content: space-between;">
+          <h2 style="font-weight: bold;">{{image.imageName}}</h2>
+          <!-- <h2>Me gusta: {{ image.likesCount }}</h2> -->
         </ion-label>
         <ion-button fill="clear" (click)="toggleLike(image)">
           <ion-icon [name]="image.liked ? 'heart' : 'heart-outline'"></ion-icon>

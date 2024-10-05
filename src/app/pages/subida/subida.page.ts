@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, inject} from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, inject} from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
@@ -33,6 +33,9 @@ export class SubidaPage implements OnInit, OnDestroy {
   categoria: string;
   mostrarUserId: boolean = false;
 
+  @ViewChild(ListadoImagenesComponent) listadoImagenesComponent: ListadoImagenesComponent;
+
+
 
   // logout(): void {
   //   this.authService.logout();
@@ -48,11 +51,27 @@ export class SubidaPage implements OnInit, OnDestroy {
     console.log('On destroy SUBIDA PAGE');
   }
 
+  ionViewDidEnter() {
+    console.log('Página Subida completamente cargada');
+    this.listadoImagenesComponent.loadImages();  // Llamada a la recarga de imágenes
+    console.log("hola aca")
+
+  }
+
+  // ionViewWillEnter() {
+  //   // Cuando la página sea visible de nuevo, recarga las imágenes
+
+  //   console.log("hola aca")
+  //   if (this.listadoImagenesComponent) {
+  //     console.log("acaaaa");
+      
+  //     this.listadoImagenesComponent.loadImages();  // Asegúrate de que el componente hijo recargue las imágenes
+  //   }
+  // }
+
   navegar(pagina) {
 
     this.router.navigate([`/${pagina}/${this.categoria}`], { replaceUrl: true });
-
-
     
   }
 

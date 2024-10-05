@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { SubidaImagenesComponent } from './subida-imagenes.component';
+import { UploadComponent } from './subida-imagenes.component';
 
 describe('SubidaImagenesComponent', () => {
-  let component: SubidaImagenesComponent;
-  let fixture: ComponentFixture<SubidaImagenesComponent>;
+  let component: UploadComponent;
+  let fixture: ComponentFixture<UploadComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ SubidaImagenesComponent ],
+      declarations: [ UploadComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(SubidaImagenesComponent);
+    fixture = TestBed.createComponent(UploadComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

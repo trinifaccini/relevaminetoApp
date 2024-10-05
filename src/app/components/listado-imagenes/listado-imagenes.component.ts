@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { Firestore, doc, getDoc, setDoc, updateDoc, increment, query, where, getDocs, collection, deleteDoc } from '@angular/fire/firestore';
 import { AuthService } from 'src/app/services/auth.service';
@@ -29,14 +29,20 @@ export class ListadoImagenesComponent implements OnInit {
 
   authService = inject(AuthService);
 
-  constructor(private firestore: Firestore) {}
+  constructor(private firestore: Firestore, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.userId = this.authService.getUserId(); // Get user ID
-    this.loadImages(); // Load images based on the user ID
+    //this.loadImages(); // Load images based on the user ID
   }
 
+
   async loadImages() {
+
+    console.log("LOADDD");
+    this.images = [];  // Reiniciar el array de imágenes
+
+    
     const imagesCollection = collection(this.firestore, `imagenes-${this.categoria}`);
 
     if (this.mostrarUserId === true && this.userId) {
@@ -54,6 +60,7 @@ export class ListadoImagenesComponent implements OnInit {
           url: imageData['url'],
           liked: likeDocSnap.exists(),
           likesCount: imageData['likesCount'] || 0,
+          imageName: imageData['imageName']
         });
       }
     } else {
@@ -70,9 +77,13 @@ export class ListadoImagenesComponent implements OnInit {
           url: imageData['url'],
           liked: likeDocSnap.exists(),
           likesCount: imageData['likesCount'] || 0,
+          imageName: imageData['imageName']
         });
       }
     }
+
+    this.cdr.detectChanges();
+
   }
 
     

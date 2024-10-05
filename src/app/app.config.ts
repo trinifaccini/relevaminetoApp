@@ -1,5 +1,5 @@
 import { ApplicationConfig, CUSTOM_ELEMENTS_SCHEMA, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, RouteReuseStrategy, withRouterConfig } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
@@ -39,6 +39,7 @@ import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideStorage, getStorage } from '@angular/fire/storage';
+import { CustomRouteReuseStrategy } from './custom-route-reuse.strategy';
 
 export const appConfig = {
   providers: [
@@ -52,11 +53,10 @@ export const appConfig = {
     provideClientHydration(), 
     provideAnimationsAsync('noop'),
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
-    provideAuth(() => getAuth()),
-    provideStorage(() => getStorage()),
     importProvidersFrom(IonicModule.forRoot()), // Proveer HttpClientModule
     provideFirestore(() => getFirestore()),
-
+    provideRouter(routes, withRouterConfig({ onSameUrlNavigation: 'reload' })),
+    { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy }  // Proporciona la estrategia personalizada
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 };

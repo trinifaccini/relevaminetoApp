@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { Firestore, doc, getDoc, collection, addDoc } from '@angular/fire/firestore';
 import { v4 as uuidv4 } from 'uuid';
 import { Auth } from '@angular/fire/auth';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   standalone: true, 
@@ -20,10 +21,17 @@ export class UploadComponent {
   selectedImages: string[] = []; // Almacena las URLs para previsualización
   userId: string = ''; // Aquí guardarás el ID del usuario autenticado
   userName: string = ''; // Aquí guardarás el nombre del usuario
+  categoria: string; 
 
+  router = inject(Router)
+  route = inject(ActivatedRoute)
+
+  
   constructor(private firestore: Firestore, private auth: Auth) {
     this.userId = this.auth.currentUser?.uid || ''; // Obtén el ID del usuario autenticado
     this.getUserName(); // Llamamos al método para obtener el nombre del usuario
+    this.categoria = this.route.snapshot.paramMap.get('categoria');    
+
   }
 
   // Método para obtener el nombre del usuario desde Firestore
@@ -58,6 +66,10 @@ export class UploadComponent {
     for (let file of this.selectedFiles) {
       this.uploadToFirebase(file); // Llama al método para subir la imagen a Firebase
     }
+
+      this.router.navigate([`subida/${this.categoria}`], { replaceUrl: true });  // Forzar recarga de la página
+
+
   }
 
   // Método para subir imágenes a Firebase Storage y luego guardarlas en Firestore
@@ -98,7 +110,7 @@ export class UploadComponent {
   // Método para guardar la URL de la imagen en Firestore
   async saveImageToFirestore(downloadURL: string, imageName: string) {
     try {
-      const imageCollection = collection(this.firestore, 'imagenes-feas'); // Referencia a la colección de Firestore
+      const imageCollection = collection(this.firestore, `imagenes-${this.categoria}`); // Referencia a la colección de Firestore
       await addDoc(imageCollection, {
         url: downloadURL,  // URL de la imagen subida
         imageName: imageName,   // Nombre del archivo que incluye el nombre de usuario

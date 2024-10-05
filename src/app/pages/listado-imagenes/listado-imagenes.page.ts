@@ -35,6 +35,7 @@ export class ListadoImagenesPage implements OnInit, OnDestroy {
     this.categoria = this.route.snapshot.paramMap.get('categoria');    
   }
 
+
   ngOnDestroy() {
     console.log('On destroy LISTADO PROPIO PAGE ');
   }
