@@ -5,5 +5,5 @@ export interface UserInterface {
     // //name: string,
     // //lastName: string,
     // password: string,
-    uid: string
+    id: string
 }

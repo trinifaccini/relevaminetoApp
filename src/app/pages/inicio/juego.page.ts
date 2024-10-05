@@ -45,7 +45,6 @@ export class GamePage implements OnInit, OnDestroy {
 
 
   redirect(page): void {
-    this.authService.logout();
     this.router.navigate([`/subida/${page}`]);
   }
 

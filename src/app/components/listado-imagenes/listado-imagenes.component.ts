@@ -1,19 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { Firestore, doc, getDoc, setDoc, updateDoc, increment, query, where, getDocs, collection, deleteDoc } from '@angular/fire/firestore';
 import { AuthService } from 'src/app/services/auth.service';
-import { Subscription } from 'rxjs';
 
-
-// src/app/components/image-list/image-list.component.ts
 interface Image {
   id: string,
   url: string;
   likesCount: number;
   liked:boolean,
 }
-
 
 @Component({
   selector: 'listado-imagenes',
@@ -24,153 +20,124 @@ interface Image {
 })
 
 
-
-export class ListadoImagenesComponent implements OnInit, OnDestroy {
+export class ListadoImagenesComponent implements OnInit {
   
-  @Input() categoria: string = '';
-  images: Image[] = [];
-  userId: any;
-  @Input() user: boolean = false;
-  private userIdSubscription: Subscription | undefined;
+  @Input() mostrarUserId: boolean = false;
+  userId: string | null = null;
+  images: any[] = [];  // Initialize as an empty array
+  @Input() categoria: string = 'feas'; 
 
-  constructor(private firestore: Firestore, private authService: AuthService) {}
+  authService = inject(AuthService);
+
+  constructor(private firestore: Firestore) {}
 
   ngOnInit() {
-    console.log("ON INIT LISTADO IMAGENES COMPONENT");
-
-    this.userId = this.authService.getCurrentUserId(); // Obtiene el userId de forma inmediata
-    this.loadImages();
-    // if (this.userId) {
-    //   console.log('User ID:', this.userId);
-    //   this.loadImages();
-    // }
-
-  }
-
-  ngOnDestroy() {
-
-    console.log("ON DESTROY  LISTADO IMAGENES COMPONENT");
-    
-    if (this.userIdSubscription) {
-      this.userIdSubscription.unsubscribe();
-    }
+    this.userId = this.authService.getUserId(); // Get user ID
+    this.loadImages(); // Load images based on the user ID
   }
 
   async loadImages() {
-    
     const imagesCollection = collection(this.firestore, `imagenes-${this.categoria}`);
 
-    // si tengo que mostrar las imagenes propias
-    if(this.user === true) {
+    if (this.mostrarUserId === true && this.userId) {
       const q = query(imagesCollection, where('userId', '==', this.userId));
       const snapshot = await getDocs(q);
 
       for (const imageDoc of snapshot.docs) {
         const imageData = imageDoc.data();
-  
-        // Verificar si el usuario ha dado "like" a esta imagen
         const likeDocRef = doc(this.firestore, `likes-${this.categoria}/${this.userId}_${imageDoc.id}`);
         const likeDocSnap = await getDoc(likeDocRef);
-  
-        // Agregar la imagen a la lista, marcándola como "likeada" o no
+
+        // Add image to the array
         this.images.push({
           id: imageDoc.id,
-          url: imageData['url'], // Asumiendo que el campo es 'url'
-          liked: likeDocSnap.exists(), // Verificar si existe un "like" en Firestore
-          likesCount: imageData['likesCount'] || 0 // Contador de likes
+          url: imageData['url'],
+          liked: likeDocSnap.exists(),
+          likesCount: imageData['likesCount'] || 0,
+        });
+      }
+    } else {
+      // Fetch all images
+      const snapshotTodas = await getDocs(imagesCollection);
+      for (const imageDoc of snapshotTodas.docs) {
+        const imageData = imageDoc.data();
+        const likeDocRef = doc(this.firestore, `likes-${this.categoria}/${this.userId}_${imageDoc.id}`);
+        const likeDocSnap = await getDoc(likeDocRef);
+
+        // Add image to the array
+        this.images.push({
+          id: imageDoc.id,
+          url: imageData['url'],
+          liked: likeDocSnap.exists(),
+          likesCount: imageData['likesCount'] || 0,
         });
       }
     }
+  }
 
+    
+
+
+  async toggleLike(image: any) {
+
+
+    const likeDocRef = doc(this.firestore, `likes-${this.categoria}/${this.userId}_${image.id}`);
+
+    const imageDocRef = doc(this.firestore, `imagenes-${this.categoria}/${image.id}`);
+
+    // Si la imagen no estaba likeada, tengo que buscar si ya hbaia likeado otra imagen
+    if(!image.liked){
+
+      // Verificar si el usuario ya ha dado "like" a alguna imagen
+      const likesQuery = query(
+        collection(this.firestore, `likes-${this.categoria}`),
+        where('userId', '==', this.userId)
+      );
+      
+      const likesSnapshot = await getDocs(likesQuery);
+      console.log(likesSnapshot.empty);
+
+      if (likesSnapshot.empty == false) {
+        console.log(`El usuario ya ha dado 'like' a otra imagen ${this.categoria}.`);
+        return; // Salir de la función si ya ha dado "like"
+      }
+
+      await setDoc(likeDocRef, { userId: this.userId, imageId: image.id });
+
+      const imageDocSnap = await getDoc(imageDocRef);
+
+      if (imageDocSnap.exists()) {
+        // Incrementar el conteo de likes en la imagen
+        await updateDoc(imageDocRef, {
+          likesCount: increment(1)
+        });
+
+        // Actualiza el estado local de liked
+        image.liked = true;
+        image.likesCount++;
+
+      } else {
+        console.error("El documento de la imagen no existe:", image.id);
+      }
+
+    }
+
+    // si la imagen estaba likeada, borro el like 
     else {
 
-      console.log("acaaaa")
-      const snapshotTodas = await getDocs(imagesCollection);
+      await deleteDoc(likeDocRef); // Eliminar el documento de "like"
 
-      for (const imageDoc of snapshotTodas.docs) {
-
-        const imageData = imageDoc.data();
-
-        // Verificar si el usuario ha dado "like" a esta imagen
-        const likeDocRef = doc(this.firestore, `likes-${this.categoria}/${this.userId}_${imageDoc.id}`);
-        const likeDocSnap = await getDoc(likeDocRef);
-
-        // Agregar la imagen a la lista, marcándola como "likeada" o no
-        this.images.push({
-          id: imageDoc.id,
-          url: imageData['url'], // Asumiendo que el campo es 'url'
-          liked: likeDocSnap.exists(), // Verificar si existe un "like" en Firestore
-          likesCount: imageData['likesCount'] || 0 // Contador de likes
-        });
-    }
-    }
-
-    
-
-
-    
-  }
-
-
-async toggleLike(image: Image) {
-  const userId = 'fHdLiJuG2nR3OK3nNJwxs8ecfoj1'; // FACCINI TRINIDAD
-
-  const likeDocRef = doc(this.firestore, `likes-${this.categoria}/${userId}_${image.id}`);
-
-  const imageDocRef = doc(this.firestore, `imagenes-${this.categoria}/${image.id}`);
-
-  // Si la imagen no estaba likeada, tengo que buscar si ya hbaia likeado otra imagen
-  if(!image.liked){
-
-     // Verificar si el usuario ya ha dado "like" a alguna imagen
-    const likesQuery = query(
-      collection(this.firestore, `likes-${this.categoria}`),
-      where('userId', '==', userId)
-    );
-    
-    const likesSnapshot = await getDocs(likesQuery);
-
-    if (!likesSnapshot.empty) {
-      console.log(`El usuario ya ha dado 'like' a otra imagen ${this.categoria}.`);
-      return; // Salir de la función si ya ha dado "like"
-    }
-
-    await setDoc(likeDocRef, { userId, imageId: image.id });
-
-    const imageDocSnap = await getDoc(imageDocRef);
-
-    if (imageDocSnap.exists()) {
-      // Incrementar el conteo de likes en la imagen
       await updateDoc(imageDocRef, {
-        likesCount: increment(1)
+        likesCount: increment(-1) // Restar 1 al contador de "likes"
       });
 
-      // Actualiza el estado local de liked
-      image.liked = true;
-      image.likesCount++;
+      image.liked = false;
+      image.likesCount--;
 
-    } else {
-      console.error("El documento de la imagen no existe:", image.id);
+
     }
-
+  
   }
-
-  // si la imagen estaba likeada, borro el like 
-  else {
-
-    await deleteDoc(likeDocRef); // Eliminar el documento de "like"
-
-    await updateDoc(imageDocRef, {
-      likesCount: increment(-1) // Restar 1 al contador de "likes"
-    });
-
-    image.liked = false;
-    image.likesCount--;
-
-
-  }
- 
-}
 
 
 }

@@ -31,7 +31,7 @@ export class SubidaPage implements OnInit, OnDestroy {
   route = inject(ActivatedRoute)
 
   categoria: string;
-  user: boolean = false;
+  mostrarUserId: boolean = false;
 
 
   // logout(): void {

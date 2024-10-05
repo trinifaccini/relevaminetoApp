@@ -27,12 +27,12 @@ export class ListadoImagenesPage implements OnInit, OnDestroy {
   route = inject(ActivatedRoute)
 
   categoria: string;
-  user: boolean = true;
+  mostrarUserId: boolean = true;
 
 
   ngOnInit() {
     console.log('On init LISTADO PROPIO PAGE');
-    this.categoria = this.route.snapshot.paramMap.get('categoria') || '';    
+    this.categoria = this.route.snapshot.paramMap.get('categoria');    
   }
 
   ngOnDestroy() {
@@ -40,14 +40,6 @@ export class ListadoImagenesPage implements OnInit, OnDestroy {
   }
 
 
-  ionViewWillEnter() {
-    console.log("Página activada LISTADO PROPIO");
-    // Aquí puedes cargar los datos o hacer cualquier lógica que necesites al entrar en la página
-  }
 
-  ionViewWillLeave() {
-    console.log("Página desactivada LISTADO PROPIO");
-    // Aquí puedes limpiar cualquier recurso o cancelar suscripciones
-  }
 
 }

@@ -49,14 +49,14 @@ const users = [
 
 export class LoginPage implements OnInit, OnDestroy {
   
-    authService = inject(AuthService)
-    fb = inject(FormBuilder)
-    router = inject(Router)
+  authService = inject(AuthService)
+  fb = inject(FormBuilder)
+  router = inject(Router)
 
-    loginForm = this.fb.nonNullable.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-    });
+  loginForm = this.fb.nonNullable.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', Validators.required],
+  });
 
   errorMessage: string | null = null;
 
@@ -66,26 +66,9 @@ export class LoginPage implements OnInit, OnDestroy {
   onSubmit() : void {
 
     const rawForm = this.loginForm.getRawValue()
-
-    this.authService
-    .login(rawForm.email, rawForm.password)
-    .subscribe(
-      {
-        next: () => {
-          this.router.navigateByUrl('/inicio')
-          this.loginForm.reset();
-
-        },
-        error: (err) => {
-      
-          const cleanedErrorCode = err.code.replace("auth/", "");
-          this.errorMessage = authReponses[cleanedErrorCode]   
-
-          console.log(this.errorMessage)
-        }   
-      })
-
-  } 
+    this.authService.login(rawForm.email, rawForm.password);
+    this.router.navigate(['/inicio']);
+  }
 
 
   hide = signal(true);

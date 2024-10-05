@@ -1,6 +1,16 @@
+<ion-header>
+    <ion-toolbar>
+      <div style="display: flex; justify-content: space-between;">
+        <ion-title>Mis imagenes {{categoria}} </ion-title>
+      </div>
+      
+    </ion-toolbar>
+  </ion-header>
+
+
 <ion-content class="fullscreen" style="--ion-background-color: linear-gradient(to bottom, #c37b10, #efceb4);">
 
-    <listado-imagenes [categoria]="categoria" [user]="user">
+    <listado-imagenes [categoria]="categoria" [mostrarUserId]="mostrarUserId">
       
     </listado-imagenes>
 

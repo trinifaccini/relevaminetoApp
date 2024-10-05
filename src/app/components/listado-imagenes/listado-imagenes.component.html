@@ -1,3 +1,5 @@
+<p *ngIf="mostrarUserId">User ID: {{ userId }}</p>
+
 <ion-list class="lista-imagenes">
 <ion-item *ngFor="let image of images; let i = index" lines="none" class="custom-item">
   <div class="imagen-contenedor">
@@ -6,7 +8,7 @@
       </ion-thumbnail>
       <div class="contenido-debajo">
         <ion-label>
-          <h2>Imagen {{ i + 1 }}</h2>
+          <h2>Imagen {{ i + 1 }} Likes: {{ image.likesCount }}</h2>
         </ion-label>
         <ion-button fill="clear" (click)="toggleLike(image)">
           <ion-icon [name]="image.liked ? 'heart' : 'heart-outline'"></ion-icon>

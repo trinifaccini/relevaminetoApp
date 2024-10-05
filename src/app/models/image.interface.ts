@@ -1,6 +1,7 @@
 export interface Image {
-    id: number;
     url: string;
-    title: string;
-    liked: boolean;
+    likesCount: number;
+    imageName: string;
+    userId: string;
+    timestamp: Date;
   }

@@ -6,6 +6,8 @@ import { SubidaPage } from './pages/subida/subida.page';
 import { LikesChartComponent } from './components/graficos-likes/graficos-likes.component';
 import { ListadoImagenesPage } from './pages/listado-imagenes/listado-imagenes.page';
 import { SubirImagenesPage } from './pages/subirImagenes/subir-imagenes.page';
+import { PaginaUnoComponent } from './pages/paginaUno';
+import { PaginaDosComponent } from './pages/paginaDos';
 
 export const routes: Routes = [
 
@@ -42,10 +44,13 @@ export const routes: Routes = [
     path: "listado/:categoria",
     component: ListadoImagenesPage,
   },
+
+  { path: 'pagina-uno', component: PaginaUnoComponent },
+  { path: 'pagina-dos', component: PaginaDosComponent },
   { 
     path: '**', 
     redirectTo: "home",
-  }
+  },
 ];
 
 
