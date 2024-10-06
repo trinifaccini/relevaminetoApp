@@ -1,17 +1,35 @@
 <div class="upload-container">
-  <h3>Subir imágenes</h3>
+  <!-- <h3>Subir imágenes</h3>
 
-  <!-- Input para seleccionar imágenes -->
   <input type="file" (change)="onFileSelected($event)" multiple>
 
-  <!-- Mostrar las imágenes seleccionadas -->
   <div *ngIf="selectedImages.length > 0">
     <h4>Imágenes seleccionadas:</h4>
     <div *ngFor="let image of selectedImages">
       <img [src]="image" alt="Imagen seleccionada" width="100" height="100">
     </div>
 
-    <!-- Botón de confirmación para subir las imágenes -->
     <button (click)="confirmUpload()" [disabled]="!selectedImages.length">Subir imágenes</button>
+  </div> -->
+
+
+  <div class="upload-container">
+    <h3>Subir imágenes</h3>
+  
+    <!-- Botón para tomar una foto -->
+    <button (click)="takePhoto()">Tomar Foto</button>
+  
+    <!-- Mostrar las imágenes seleccionadas -->
+    <div *ngIf="selectedImages.length > 0">
+      <h4>Imágenes seleccionadas:</h4>
+      <div *ngFor="let image of selectedImages; let i = index">
+        <img [src]="image" alt="Imagen seleccionada" width="100" height="100">
+        <button (click)="removeImage(i)">Descartar</button>
+      </div>
+  
+      <!-- Botón de confirmación para subir las imágenes -->
+      <button (click)="confirmUpload()" [disabled]="!selectedImages.length">Subir imágenes</button>
+    </div>
   </div>
+  
 </div>

@@ -22,28 +22,30 @@ export const routes: Routes = [
   },
   {
     path: "login",
-    component: LoginPage,
+    loadComponent: () => import('./pages/login/login.page').then(m => m.LoginPage),
   },
   {
     path: "inicio",
-    component: GamePage,
+    loadComponent: () => import('./pages/inicio/juego.page').then(m => m.GamePage),
   },
   {
     path: "subida/:categoria",
-    component: SubidaPage,
+    loadComponent: () => import('./pages/subida/subida.page').then(m => m.SubidaPage),
     data: { shouldReuse: false }
   },
   {
     path: "subirImagenes/:categoria",
-    component: SubirImagenesPage,
+    loadComponent: () => import('./pages/subirImagenes/subir-imagenes.page').then(m => m.SubirImagenesPage),
   },
   {
     path: "graficos/:categoria",
-    component: LikesChartComponent,
+    loadComponent: () => import('./components/graficos-likes/graficos-likes.component').then(m => m.LikesChartComponent),
+
   },
   {
     path: "listado/:categoria",
-    component: ListadoImagenesPage,
+    loadComponent: () => import('./pages/listado-imagenes/listado-imagenes.page').then(m => m.ListadoImagenesPage),
+
   },
 
   { path: 'pagina-uno', component: PaginaUnoComponent },

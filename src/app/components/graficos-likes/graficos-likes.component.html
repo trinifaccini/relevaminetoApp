@@ -1,3 +1,9 @@
 <div style="width: 100%; height: 400px;">
   <canvas id="likesChart"></canvas>
 </div>
+
+<!-- Muestra la imagen seleccionada debajo del gráfico -->
+<div *ngIf="selectedImage">
+  <h3>Imagen seleccionada:</h3>
+  <img [src]="selectedImage" alt="Imagen seleccionada" width="300">
+</div>

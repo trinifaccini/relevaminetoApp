@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { GraficosLikesComponent } from './graficos-likes.component';
+import { LikesChartComponent } from './graficos-likes.component';
 
-describe('GraficosLikesComponent', () => {
-  let component: GraficosLikesComponent;
-  let fixture: ComponentFixture<GraficosLikesComponent>;
+describe('LikesChartComponent', () => {
+  let component: LikesChartComponent;
+  let fixture: ComponentFixture<LikesChartComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ GraficosLikesComponent ],
+      declarations: [ LikesChartComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(GraficosLikesComponent);
+    fixture = TestBed.createComponent(LikesChartComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

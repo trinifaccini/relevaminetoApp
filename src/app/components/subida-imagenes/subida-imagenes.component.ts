@@ -1,10 +1,11 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { Firestore, doc, getDoc, collection, addDoc } from '@angular/fire/firestore';
-import { v4 as uuidv4 } from 'uuid';
 import { Auth } from '@angular/fire/auth';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+
 
 @Component({
   standalone: true, 
@@ -15,16 +16,23 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 
 
-export class UploadComponent {
+export class UploadComponent implements OnDestroy{
 
   selectedFiles: File[] = []; // Almacena las imágenes seleccionadas
-  selectedImages: string[] = []; // Almacena las URLs para previsualización
+//  selectedImages: string[] = []; // Almacena las URLs para previsualización
+selectedImages: string[] = [];
+
   userId: string = ''; // Aquí guardarás el ID del usuario autenticado
   userName: string = ''; // Aquí guardarás el nombre del usuario
   categoria: string; 
 
   router = inject(Router)
   route = inject(ActivatedRoute)
+
+  ngOnDestroy(): void {
+    this.selectedFiles = [];
+    this.selectedImages = [];
+  }
 
   
   constructor(private firestore: Firestore, private auth: Auth) {
@@ -67,7 +75,7 @@ export class UploadComponent {
       this.uploadToFirebase(file); // Llama al método para subir la imagen a Firebase
     }
 
-      this.router.navigate([`subida/${this.categoria}`], { replaceUrl: true });  // Forzar recarga de la página
+    this.router.navigate([`subida/${this.categoria}`]);  // Forzar recarga de la página
 
 
   }
@@ -124,4 +132,29 @@ export class UploadComponent {
       console.error('Error al guardar la imagen en Firestore:', error);
     }
   }
+
+
+  async takePhoto() {
+
+    const image = await Camera.getPhoto({
+      quality: 90,
+      allowEditing: true, // Permite al usuario aceptar o descartar la imagen
+      resultType: CameraResultType.DataUrl,
+      source: CameraSource.Camera
+    });
+
+    // Almacena la imagen tomada en la lista de imágenes seleccionadas
+    if (image) {
+      this.selectedImages.push(image.dataUrl);
+    }
+  }
+
+
+
+  removeImage(index: number) {
+    // Permite descartar una imagen de la lista
+    this.selectedImages.splice(index, 1);
+  }
+
+
 }

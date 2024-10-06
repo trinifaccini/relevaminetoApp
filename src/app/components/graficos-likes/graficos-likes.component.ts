@@ -1,7 +1,9 @@
 
-import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
 import { Firestore, collection, getDocs } from '@angular/fire/firestore';
-import { Chart } from 'chart.js/auto';
+import { ActivatedRoute } from '@angular/router';
+import { Chart, ChartEvent } from 'chart.js/auto';
 
 
 @Component({
@@ -9,16 +11,23 @@ import { Chart } from 'chart.js/auto';
   selector: 'app-graficos-likes',
   templateUrl: './graficos-likes.component.html',
   styleUrls: ['./graficos-likes.component.css'],
+  imports: [CommonModule]
 })
 
 export class LikesChartComponent implements OnInit {
 
   chart: any; // Variable para el gráfico
+  route = inject(ActivatedRoute)
+  categoria:string;
+  selectedImage: string | undefined; // Para almacenar la imagen seleccionada
 
   constructor(private firestore: Firestore) { }
 
   ngOnInit(): void {
+    this.categoria = this.route.snapshot.paramMap.get('categoria') || '';
+
     this.loadLikesData();
+
   }
 
   // Cargar los datos de "likes" desde Firestore
@@ -30,7 +39,7 @@ export class LikesChartComponent implements OnInit {
 
     querySnapshot.forEach((doc) => {
       const imageData = doc.data();
-      imageLabels.push('1'); // Puedes usar el nombre o ID de la imagen
+      imageLabels.push(imageData['url']); // Puedes usar el nombre o ID de la imagen
       likesData.push(imageData['likesCount'] || 0); // Contador de "likes"
     });
 
@@ -38,29 +47,71 @@ export class LikesChartComponent implements OnInit {
     this.createChart(imageLabels,likesData);
   }
 
-  // Crear el gráfico con Chart.js
   createChart(labels: string[], data: number[]) {
+    const tipo = this.categoria === 'feas' ? 'bar' : 'pie';
+  
     const ctx = document.getElementById('likesChart') as HTMLCanvasElement;
+  
+    // Si ya existe un gráfico, destrúyelo antes de crear uno nuevo
+    if (this.chart) {
+      this.chart.destroy();
+    }
+  
+    const options: any = {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: tipo !== 'pie' // Ocultar leyenda para gráficos de torta
+        }
+      },
+      onClick: (event: ChartEvent, elements: any[]) => {
+        if (elements.length > 0) {
+          const index = elements[0].index; // Índice de la imagen seleccionada
+          this.displayImage(labels[index]); // Mostrar la imagen correspondiente
+        }
+      }
+    };
+  
+    if (tipo === 'bar') {
+      options.scales = {
+        x: {
+          display: false // Ocultar etiquetas del eje X
+        },
+        y: {
+          beginAtZero: true
+        }
+      };
+    }
+
+  
     this.chart = new Chart(ctx, {
-      type: 'bar',
+      type: tipo,
       data: {
-        labels: labels, // Nombre o ID de la imagen
+        labels: labels,
         datasets: [{
-          label: '# of Likes',
-          data: data, // Cantidad de likes de cada imagen
-          backgroundColor: 'rgba(75, 192, 192, 0.2)',
-          borderColor: 'rgba(75, 192, 192, 1)',
+          label: 'Cantidad de Me Gusta',
+          data: data,
+          backgroundColor: tipo === 'pie' ? [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)'
+          ] : 'rgba(75, 192, 192, 0.2)',
+          borderColor: tipo === 'pie' ? [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)'
+          ] : 'rgba(75, 192, 192, 1)',
           borderWidth: 1
         }]
       },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      }
+      options: options
     });
   }
+// Función para mostrar la imagen
+displayImage(imageLabel: string): void {
+  // Asume que las imágenes tienen nombres relacionados con las etiquetas
+  this.selectedImage = imageLabel 
 }
+}
+  
 
