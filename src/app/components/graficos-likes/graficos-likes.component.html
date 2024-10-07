@@ -1,9 +1,29 @@
-<div style="width: 100%; height: 400px;">
-  <canvas id="likesChart"></canvas>
-</div>
+<ion-header>
+  <ion-toolbar>
+    <div style="display: flex; justify-content: space-between;">
+      <ion-title>Me gusta en imagenes {{categoria}} </ion-title>
+    </div>
+    
+  </ion-toolbar>
+</ion-header>
 
-<!-- Muestra la imagen seleccionada debajo del gráfico -->
-<div *ngIf="selectedImage">
-  <h3>Imagen seleccionada:</h3>
-  <img [src]="selectedImage" alt="Imagen seleccionada" width="300">
-</div>
+
+<ion-content class="fullscreen" style="--ion-background-color: linear-gradient(to bottom, #c37b10, #efceb4);">
+  
+  <div class="main-screen">
+
+    <div class="canvas">
+      <canvas id="likesChart"></canvas>
+    </div>
+    
+    <!-- Muestra la imagen seleccionada debajo del gráfico -->
+    <div *ngIf="selectedImage">
+      <h3>Imagen seleccionada:</h3>
+      <img [src]="selectedImage" alt="Imagen seleccionada" width="300">
+    </div>
+  
+
+  </div>
+
+</ion-content>
+

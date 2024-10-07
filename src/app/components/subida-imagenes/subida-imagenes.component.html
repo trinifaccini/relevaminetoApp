@@ -17,7 +17,7 @@
     <h3>Subir imágenes</h3>
   
     <!-- Botón para tomar una foto -->
-    <button (click)="takePhoto()">Tomar Foto</button>
+    <ion-button (click)="takePhoto()">Tomar Foto</ion-button>
   
     <!-- Mostrar las imágenes seleccionadas -->
     <div *ngIf="selectedImages.length > 0">
@@ -28,7 +28,7 @@
       </div>
   
       <!-- Botón de confirmación para subir las imágenes -->
-      <button (click)="confirmUpload()" [disabled]="!selectedImages.length">Subir imágenes</button>
+      <ion-button (click)="confirmUpload()" [disabled]="!selectedImages.length">Subir imágenes</ion-button>
     </div>
   </div>
   

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { Firestore, collection, getDocs } from '@angular/fire/firestore';
 import { ActivatedRoute } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
 import { Chart, ChartEvent } from 'chart.js/auto';
 
 
@@ -11,7 +12,7 @@ import { Chart, ChartEvent } from 'chart.js/auto';
   selector: 'app-graficos-likes',
   templateUrl: './graficos-likes.component.html',
   styleUrls: ['./graficos-likes.component.css'],
-  imports: [CommonModule]
+  imports: [CommonModule, IonicModule]
 })
 
 export class LikesChartComponent implements OnInit {

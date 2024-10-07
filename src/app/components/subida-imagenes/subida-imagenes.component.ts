@@ -1,45 +1,43 @@
+
 import { Component, inject, OnDestroy } from '@angular/core';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { Firestore, doc, getDoc, collection, addDoc } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc, doc, getDoc } from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-
+import { Router, ActivatedRoute } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import Swal from 'sweetalert2';
 
 @Component({
-  standalone: true, 
+  standalone: true,
   selector: 'app-upload',
   templateUrl: './subida-imagenes.component.html',
   styleUrls: ['./subida-imagenes.component.css'],
-  imports: [CommonModule]
+  imports: [CommonModule, IonicModule]
 })
+export class UploadComponent implements OnDestroy {
+  
+  selectedImages: string[] = []; // Almacena las URLs de las imágenes previsualizadas
+  userId: string = '';
+  userName: string = '';
+  categoria: string;
 
+  router = inject(Router);
+  route = inject(ActivatedRoute);
 
-export class UploadComponent implements OnDestroy{
-
-  selectedFiles: File[] = []; // Almacena las imágenes seleccionadas
-//  selectedImages: string[] = []; // Almacena las URLs para previsualización
-selectedImages: string[] = [];
-
-  userId: string = ''; // Aquí guardarás el ID del usuario autenticado
-  userName: string = ''; // Aquí guardarás el nombre del usuario
-  categoria: string; 
-
-  router = inject(Router)
-  route = inject(ActivatedRoute)
-
-  ngOnDestroy(): void {
-    this.selectedFiles = [];
-    this.selectedImages = [];
+  constructor(private firestore: Firestore, private auth: Auth) {
+    this.userId = this.auth.currentUser?.uid || '';
+    this.getUserName().then(() => {
+      console.log("Nombre de usuario obtenido:", this.userName);
+    }).catch((error) => {
+      console.error("Error al obtener el nombre de usuario:", error);
+    });
+    this.categoria = this.route.snapshot.paramMap.get('categoria');
   }
 
-  
-  constructor(private firestore: Firestore, private auth: Auth) {
-    this.userId = this.auth.currentUser?.uid || ''; // Obtén el ID del usuario autenticado
-    this.getUserName(); // Llamamos al método para obtener el nombre del usuario
-    this.categoria = this.route.snapshot.paramMap.get('categoria');    
-
+  ngOnDestroy(): void {
+    this.selectedImages = [];
   }
 
   // Método para obtener el nombre del usuario desde Firestore
@@ -49,83 +47,131 @@ selectedImages: string[] = [];
 
     if (userSnapshot.exists()) {
       const userData = userSnapshot.data();
-      this.userName = userData['nombre']; // Aquí asumes que el documento de usuario tiene un campo 'nombre'
+      this.userName = userData['nombre']; // Asume que hay un campo 'nombre' en el documento de usuario
     }
   }
 
-  // Método para manejar la selección de imágenes
-  onFileSelected(event: any) {
-    const files: FileList = event.target.files;
-    this.selectedFiles = []; // Limpia las imágenes seleccionadas previamente
-    this.selectedImages = []; // Limpia las previsualizaciones
-
-    for (let i = 0; i < files.length; i++) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.selectedImages.push(e.target.result); // Muestra las imágenes seleccionadas en la vista
-      };
-      reader.readAsDataURL(files[i]);
-      this.selectedFiles.push(files[i]); // Almacena los archivos seleccionados
+  // Método para tomar una foto con la cámara
+  async takePhoto() {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: true,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Camera
+      });
+  
+      if (image && image.dataUrl) {
+        console.log("Imagen capturada:", image.dataUrl); // Verifica el formato del dataUrl
+        this.selectedImages.push(image.dataUrl); // Almacena la imagen para previsualización
+      } else {
+        console.error("No se capturó ninguna imagen o el formato es incorrecto.");
+      }
+    } catch (error) {
+      console.error("Error al tomar la foto:", error);
     }
   }
 
   // Método que se ejecuta cuando el usuario confirma la subida
-  confirmUpload() {
-    for (let file of this.selectedFiles) {
-      this.uploadToFirebase(file); // Llama al método para subir la imagen a Firebase
-    }
-
-    this.router.navigate([`subida/${this.categoria}`]);  // Forzar recarga de la página
-
-
-  }
-
-  // Método para subir imágenes a Firebase Storage y luego guardarlas en Firestore
-  async uploadToFirebase(file: File) {
+  async confirmUpload() {
     if (!this.userName) {
-      console.error('El nombre de usuario no está disponible todavía');
+      console.error('El nombre de usuario no está disponible todavía. Espera a que se cargue.');
       return;
     }
+  
+    if (this.selectedImages.length === 0) {
+      console.error('No hay imágenes seleccionadas para subir.');
+      return;
+    }
+  
+    console.log("Confirmando la subida...");
+  
+    const uploadPromises = this.selectedImages.map((imageDataUrl, index) => {
+      return this.uploadToFirebase(imageDataUrl, `imagen${index}.jpg`);
+    });
+  
+    try {
+      await Promise.all(uploadPromises); // Espera todas las subidas
+      console.log('Todas las imágenes se han subido correctamente');
 
+      Swal.fire({
+        icon: 'success',
+        title: '¡Subida completa!',
+        text: 'Se han subido correctamente',
+        heightAuto: false
+      });
+      
+      this.router.navigate([`subida/${this.categoria}`]); // Navegar una vez completadas
+    } catch (error) {
+      console.error('Error durante la subida de imágenes:', error);
+    }
+  }
+  
+
+  // Método para subir imágenes a Firebase Storage y luego guardarlas en Firestore
+  async uploadToFirebase(dataUrl: string, fileName: string) {
+    console.log("Iniciando la subida a Firebase...");
+  
+    const blob = this.dataURLtoBlob(dataUrl); // Convertir a Blob
     const storage = getStorage();
+    const storageRef = ref(storage, `imagenes/${this.userName}_${fileName}`);
+  
+    const uploadTask = uploadBytesResumable(storageRef, blob);
+  
+    return new Promise<void>((resolve, reject) => {
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(`Progreso de subida: ${progress}%`);
+        },
+        (error) => {
+          console.error('Error al subir la imagen:', error);
+          reject(error); // Manejo de error en la subida
+        },
+        async () => {
+          try {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            console.log('Imagen disponible en:', downloadURL);
+            await this.saveImageToFirestore(downloadURL, `${this.userName}_${fileName}`);
+            resolve(); // Subida exitosa
+          } catch (error) {
+            console.error('Error al obtener el URL de la imagen:', error);
+            reject(error);
+          }
+        }
+      );
+    });
+  }
+  
 
-    // Crear un nombre de archivo único con el nombre del usuario y el nombre del archivo original
-    const fileName = `${this.userName}_${file.name}`;
-    const storageRef = ref(storage, `imagenes/${fileName}`);
-
-    const uploadTask = uploadBytesResumable(storageRef, file);
-
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log('Progreso de subida: ' + progress + '%');
-      },
-      (error) => {
-        console.error('Error al subir la imagen: ', error);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-          console.log('Imagen disponible en:', downloadURL);
-
-          // Guardar la URL en Firestore
-          await this.saveImageToFirestore(downloadURL, fileName);
-        });
-      }
-    );
+  // Método para convertir dataURL a Blob
+  dataURLtoBlob(dataUrl: string): Blob {
+    const arr = dataUrl.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
   }
 
   // Método para guardar la URL de la imagen en Firestore
   async saveImageToFirestore(downloadURL: string, imageName: string) {
+
+    console.log("SAVE IMAGES TO FIRESTORE");
+
     try {
       const imageCollection = collection(this.firestore, `imagenes-${this.categoria}`); // Referencia a la colección de Firestore
       await addDoc(imageCollection, {
-        url: downloadURL,  // URL de la imagen subida
-        imageName: imageName,   // Nombre del archivo que incluye el nombre de usuario
-        userId: this.userId,    // ID del usuario que subió la imagen
+        url: downloadURL, // URL de la imagen subida
+        imageName: imageName, // Nombre del archivo
+        userId: this.userId, // ID del usuario que subió la imagen
         userName: this.userName, // Nombre del usuario
-        timestamp: new Date(),  // Fecha de subida
-        likesCount: 0,          // Inicializa los likes en 0
+        timestamp: new Date(), // Fecha de subida
+        likesCount: 0 // Inicializa los likes en 0
       });
       console.log('Imagen guardada en Firestore con éxito');
     } catch (error) {
@@ -133,28 +179,8 @@ selectedImages: string[] = [];
     }
   }
 
-
-  async takePhoto() {
-
-    const image = await Camera.getPhoto({
-      quality: 90,
-      allowEditing: true, // Permite al usuario aceptar o descartar la imagen
-      resultType: CameraResultType.DataUrl,
-      source: CameraSource.Camera
-    });
-
-    // Almacena la imagen tomada en la lista de imágenes seleccionadas
-    if (image) {
-      this.selectedImages.push(image.dataUrl);
-    }
-  }
-
-
-
+  // Método para eliminar una imagen de la lista de seleccionadas
   removeImage(index: number) {
-    // Permite descartar una imagen de la lista
     this.selectedImages.splice(index, 1);
   }
-
-
 }

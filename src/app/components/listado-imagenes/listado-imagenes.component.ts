@@ -3,6 +3,7 @@ import { ChangeDetectorRef, Component, inject, Input, OnDestroy, OnInit } from '
 import { IonicModule } from '@ionic/angular';
 import { Firestore, doc, getDoc, setDoc, updateDoc, increment, query, where, getDocs, collection, deleteDoc } from '@angular/fire/firestore';
 import { AuthService } from 'src/app/services/auth.service';
+import Swal from 'sweetalert2';
 
 interface Image {
   id: string,
@@ -92,7 +93,6 @@ export class ListadoImagenesComponent implements OnInit {
 
   async toggleLike(image: any) {
 
-
     const likeDocRef = doc(this.firestore, `likes-${this.categoria}/${this.userId}_${image.id}`);
 
     const imageDocRef = doc(this.firestore, `imagenes-${this.categoria}/${image.id}`);
@@ -110,8 +110,14 @@ export class ListadoImagenesComponent implements OnInit {
       console.log(likesSnapshot.empty);
 
       if (likesSnapshot.empty == false) {
-        console.log(`El usuario ya ha dado 'like' a otra imagen ${this.categoria}.`);
-        return; // Salir de la función si ya ha dado "like"
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: `El usuario ya ha dado 'me gusta' a otra imagen ${this.categoria}.`,
+          heightAuto: false
+        });
+
+        return
       }
 
       await setDoc(likeDocRef, { userId: this.userId, imageId: image.id });

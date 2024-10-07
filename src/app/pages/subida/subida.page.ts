@@ -6,7 +6,7 @@ import { LoginPage } from '../login/login.page';4
 import { IonicModule } from '@ionic/angular';
 import { ListadoImagenesComponent } from 'src/app/components/listado-imagenes/listado-imagenes.component';
 import { UploadComponent } from 'src/app/components/subida-imagenes/subida-imagenes.component';
-import { Firestore, doc, getDoc, setDoc, updateDoc, increment, query, where, getDocs, collection, deleteDoc } from '@angular/fire/firestore';
+import { Firestore, doc, getDoc, getDocs, collection, orderBy, query } from '@angular/fire/firestore';
 
 
 @Component({
@@ -34,21 +34,24 @@ export class SubidaPage implements OnInit, OnDestroy {
   authService = inject(AuthService)
 
   images: any[] = [];
-
   categoria: string;
   mostrarUserId: boolean = false;
   userId: string;
+  loading: boolean = true;
 
   constructor(private firestore: Firestore, ) {}
 
-  async loadImages() {
 
-    console.log("LOADDD");
+  async loadImages() {
+    this.images = [];  // Reiniciar el array de imágenes
     this.images = [];  // Reiniciar el array de imágenes
     
     const imagesCollection = collection(this.firestore, `imagenes-${this.categoria}`);
 
-    const snapshotTodas = await getDocs(imagesCollection);
+    // Consulta para ordenar por timestamp de manera descendente (más reciente primero)
+    const q = query(imagesCollection, orderBy('timestamp', 'desc'));
+
+    const snapshotTodas = await getDocs(q);
     for (const imageDoc of snapshotTodas.docs) {
       const imageData = imageDoc.data();
       const likeDocRef = doc(this.firestore, `likes-${this.categoria}/${this.userId}_${imageDoc.id}`);
@@ -62,8 +65,15 @@ export class SubidaPage implements OnInit, OnDestroy {
         likesCount: imageData['likesCount'] || 0,
         imageName: imageData['imageName']
       });
+
+      this.loading = false;
+
     }
-    }
+
+    this.loading = false;
+
+
+  }
 
 
   ngOnInit() {
@@ -74,6 +84,8 @@ export class SubidaPage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     console.log('On destroy SUBIDA PAGE');
+    this.loading = false;
+    this.images = []
   }
 
 
@@ -86,8 +98,16 @@ export class SubidaPage implements OnInit, OnDestroy {
     }, 3000);  // 3 segundos de retraso
   }
 
-  navegar(pagina) {
+  ionViewDidLeave() {
 
+    console.log('On VIEW WILL LEAVE SUBIDA PAGE');
+    this.loading = true;
+    this.images = []
+    
+  }
+
+
+  navegar(pagina) {
     this.router.navigate([`/${pagina}/${this.categoria}`]);
     
   }
