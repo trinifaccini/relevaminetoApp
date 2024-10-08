@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { IonicModule } from '@ionic/angular';
 import { ListadoImagenesComponent } from 'src/app/components/listado-imagenes/listado-imagenes.component';
-import { Firestore, doc, getDoc, getDocs, collection, query, orderBy } from '@angular/fire/firestore';
+import { Firestore, doc, getDoc, getDocs, collection, query, orderBy, where } from '@angular/fire/firestore';
 
 
 @Component({
@@ -80,8 +80,10 @@ export class ListadoImagenesPage implements OnInit, OnDestroy {
     const imagesCollection = collection(this.firestore, `imagenes-${this.categoria}`);
 
     // Consulta para ordenar por timestamp de manera descendente (más reciente primero)
-    const q = query(imagesCollection, orderBy('timestamp', 'desc'));
-
+    const q = query(
+      imagesCollection,
+      orderBy('timestamp', 'desc')
+    );
     const snapshotTodas = await getDocs(q);
     for (const imageDoc of snapshotTodas.docs) {
       const imageData = imageDoc.data();
@@ -104,6 +106,8 @@ export class ListadoImagenesPage implements OnInit, OnDestroy {
 
      this.loading = false;
     }
+    this.loading = false;
+
   }
 
 

@@ -21,19 +21,43 @@ const authReponses = {
 
 const users = [
   {
+    id: 1,
     username: "pperez12",
-    email: "trini@trini.com",
-    password: "123456"
+    email: "admin@admin.com",
+    password: "111111",
+    perfil: "ADMINITRADOR"
   },
   {
+    id: 2,
     username: "martinapok",
-    email: "martinap@hotmail.com",
-    password: "marta96"
+    email: "invitado@invitado.com",
+    password: "222222",
+    perfil: "INVITADO"
+
   },
   {
+    id: 3,
     username: "tomi_acu",
-    email: "tomas_acu@gmail.com",
-    password: "acunia12"
+    email: "usuario@usuario.com",
+    password: "333333",
+    perfil: "USUARIO"
+
+  },
+  {
+    id: 4,
+    username: "tomi_acu",
+    email: "anonimo@anonimo.com",
+    password: "444444",
+    perfil: "ANONIMO"
+
+  },
+  {
+    id: 5,
+    username: "tomi_acu",
+    email: "tester@tester.com",
+    password: "555555",
+    perfil: "TESTER"
+
   }
 ]
 
@@ -49,6 +73,7 @@ const users = [
 
 export class LoginPage implements OnInit, OnDestroy {
   
+  users = users;
   authService = inject(AuthService)
   fb = inject(FormBuilder)
   router = inject(Router)
@@ -82,8 +107,8 @@ export class LoginPage implements OnInit, OnDestroy {
   autocompleCredentials(userIndex) {
 
     this.loginForm.setValue({
-      email: users[userIndex].email,
-      password: users[userIndex].password
+      email: users[userIndex-1].email,
+      password: users[userIndex-1].password
     });
   }
 

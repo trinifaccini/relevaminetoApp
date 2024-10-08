@@ -28,10 +28,11 @@ import { SplashScreen } from '@capacitor/splash-screen'
 
 export class AppComponent implements OnInit, OnDestroy {
 
-  authService = inject(AuthService);
   title: any;
+  rutasOcultas = ['/splash', '/login']; // Reemplaza con las rutas donde NO quieres mostrar el botón
 
-  constructor(private platform: Platform, private router: Router) {
+
+  constructor(private platform: Platform, private router: Router, public authService: AuthService) {
     this.initializeApp();
   }
 
@@ -40,6 +41,17 @@ export class AppComponent implements OnInit, OnDestroy {
       // Ocultar la splash screen solo cuando la plataforma está completamente lista
       SplashScreen.hide();
     });
+  }
+
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  mostrarBoton(): boolean {
+    // Verifica si la ruta actual está en la lista de rutas ocultas
+    return !this.rutasOcultas.includes(this.router.url);
   }
 
 

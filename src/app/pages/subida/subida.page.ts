@@ -84,7 +84,7 @@ export class SubidaPage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     console.log('On destroy SUBIDA PAGE');
-    this.loading = false;
+    this.loading = true;
     this.images = []
   }
 

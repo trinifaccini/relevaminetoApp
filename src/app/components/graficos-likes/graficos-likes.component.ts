@@ -79,8 +79,15 @@ export class LikesChartComponent implements OnInit {
           display: false // Ocultar etiquetas del eje X
         },
         y: {
+          ticks: {
+              // Muestra solo números enteros
+              stepSize: 1,
+              callback: function(value) {
+                  return Number.isInteger(value) ? value : '';
+              }
+          },
           beginAtZero: true
-        }
+      }
       };
     }
 

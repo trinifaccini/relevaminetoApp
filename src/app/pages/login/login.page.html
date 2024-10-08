@@ -18,19 +18,12 @@
       </ion-item>
 
       <div class="buttons">
-        <ion-button class="custom-button" expand="block" type="button"  (click)="autocompleCredentials(0)">
-          Ingreso rápido 1
-        </ion-button>
 
-        <ion-button class="custom-button" expand="block" type="button"  (click)="autocompleCredentials(1)">
-          Ingreso rápido 2
-        </ion-button>
-
-        <ion-button class="custom-button" expand="block" type="button"  (click)="autocompleCredentials(2)">
-          Ingreso rápido 3
-        </ion-button>
-
+        <ion-button *ngFor="let user of users" expand="block" type="button"  class="custom-button" (click)="autocompleCredentials(user.id)">
+              {{ user.perfil }}
+            </ion-button>
       </div>
+
 
       <ion-button class="button-login" expand="block" type="submit"  [disabled]="loginForm.invalid">
         Iniciar sesión
@@ -38,10 +31,5 @@
      
     </form>
 
-
-    <!-- <div class="forgot-password">
-      <p (click)="navigateToRegister()" style="cursor: pointer; ">No tenes cuenta? Registrate</p>
-    </div> -->
-
-</div>
+  </div>
 </ion-content>

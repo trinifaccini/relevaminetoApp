@@ -2,6 +2,12 @@
 
    
   <ion-content>
+
+    <ion-fab *ngIf="mostrarBoton()" vertical="bottom" horizontal="center" slot="fixed">
+       <ion-button  type="button" color="danger" (click)="logout()">
+       CERRAR SESION
+      </ion-button>
+    </ion-fab>
     <ion-router-outlet [animated]="true" [swipeGesture]="true"></ion-router-outlet>
   </ion-content>
 </ion-app>
