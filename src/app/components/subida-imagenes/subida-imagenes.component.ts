@@ -3,7 +3,7 @@ import { Component, inject, OnDestroy } from '@angular/core';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { Firestore, collection, addDoc, doc, getDoc } from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { Camera, CameraDirection, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Router, ActivatedRoute } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
@@ -58,7 +58,8 @@ export class UploadComponent implements OnDestroy {
         quality: 90,
         allowEditing: true,
         resultType: CameraResultType.DataUrl,
-        source: CameraSource.Camera
+        source: CameraSource.Camera,
+        direction: CameraDirection.Rear // Abre la cámara trasera por defecto
       });
   
       if (image && image.dataUrl) {
