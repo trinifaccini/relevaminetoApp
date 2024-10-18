@@ -6,22 +6,23 @@
     align-items: center;
     text-align: center;
     height: 100vh;
+    padding-top: 50px
 }
 
 h1 {
-  font-size: 24px;
+  font-size: 45px;
   font-weight: bold;
   color: #000;
   letter-spacing: 0.05em;
   font-family: "Kanit";
-  margin-bottom: 30px;
-  padding-top: 70px
 }
     
   
     form {
+      margin-top: 30px;
       width: 80%;
       font-family: "Kanit";
+      font-size: x-large;
       
       ion-item {
         --background: rgb(245, 249, 250);
@@ -29,10 +30,10 @@ h1 {
         margin-bottom: 30px;
         --border-style: none
 
-
         ion-label {
           color: #000;
           font-family: "Kanit";
+          
         }
 
         align-content: center;
@@ -47,7 +48,6 @@ h1 {
   
 
     }
-  
 
       .custom-button {
         --background: #CDE7B0;  /* Morado */
@@ -63,10 +63,13 @@ h1 {
     
 
     .buttons {
+      height: 40vh;
       display: flex;
-      justify-content: space-between;
       flex-direction: column;
-
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      align-items: stretch;
+      align-content: stretch;
     }
 
 

@@ -19,7 +19,8 @@
     <!-- Muestra la imagen seleccionada debajo del gráfico -->
     <div *ngIf="selectedImage">
       <h3 style="font-family: Kanit; color: orange;">Imagen seleccionada:</h3>
-      <img [src]="selectedImage" alt="Imagen seleccionada" width="300">
+      <img [src]="selectedImage.url" alt="Imagen seleccionada" width="200">
+      <p>Usuario: {{selectedImage.userName}} - Fecha: {{selectedImage.timestamp*1000 | date: 'dd/MM'}}</p>
     </div>
   
 

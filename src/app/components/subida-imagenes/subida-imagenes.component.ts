@@ -26,13 +26,12 @@ export class UploadComponent implements OnDestroy {
   router = inject(Router);
   route = inject(ActivatedRoute);
 
+  isLoading: boolean = false;
+
   constructor(private firestore: Firestore, private auth: Auth) {
+
+    console.log(this.auth.currentUser.uid)
     this.userId = this.auth.currentUser?.uid || '';
-    this.getUserName().then(() => {
-      console.log("Nombre de usuario obtenido:", this.userName);
-    }).catch((error) => {
-      console.error("Error al obtener el nombre de usuario:", error);
-    });
     this.categoria = this.route.snapshot.paramMap.get('categoria');
   }
 
@@ -47,7 +46,7 @@ export class UploadComponent implements OnDestroy {
 
     if (userSnapshot.exists()) {
       const userData = userSnapshot.data();
-      this.userName = userData['nombre']; // Asume que hay un campo 'nombre' en el documento de usuario
+      this.userName = userData['perfil']; // Asume que hay un campo 'nombre' en el documento de usuario
     }
   }
 
@@ -75,6 +74,19 @@ export class UploadComponent implements OnDestroy {
 
   // Método que se ejecuta cuando el usuario confirma la subida
   async confirmUpload() {
+
+    if (this.isLoading) {
+      return; // Evita llamadas adicionales mientras ya está en proceso
+   }
+
+    this.isLoading = true;
+
+    await this.getUserName().then(() => {
+      console.log("Nombre de usuario obtenido:", this.userName);
+    }).catch((error) => {
+      console.error("Error al obtener el nombre de usuario:", error);
+    });
+
     if (!this.userName) {
       console.error('El nombre de usuario no está disponible todavía. Espera a que se cargue.');
       return;
@@ -95,15 +107,18 @@ export class UploadComponent implements OnDestroy {
       await Promise.all(uploadPromises); // Espera todas las subidas
       console.log('Todas las imágenes se han subido correctamente');
 
+      this.isLoading = false;
+
       Swal.fire({
         icon: 'success',
         title: '¡Subida completa!',
-        text: 'Se han subido correctamente',
-        heightAuto: false
+        heightAuto: false,
+        confirmButtonText: "ACEPTAR"
       });
       
       this.router.navigate([`subida/${this.categoria}`]); // Navegar una vez completadas
     } catch (error) {
+      this.isLoading = false;
       console.error('Error durante la subida de imágenes:', error);
     }
   }

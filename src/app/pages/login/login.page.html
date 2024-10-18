@@ -2,7 +2,8 @@
 
   <div class="login-content">
 
-    <h1>Ingresa tus datos</h1>
+    <h1>Ingresá</h1>
+    <h1>tus datos</h1>
 
     @if (errorMessage) {
       <p style="text-align: center; color: red;">{{errorMessage}}</p>
@@ -22,13 +23,12 @@
         <ion-button *ngFor="let user of users" expand="block" type="button"  class="custom-button" (click)="autocompleCredentials(user.id)">
               {{ user.perfil }}
             </ion-button>
+
+          <ion-button class="button-login" expand="block" type="submit"  [disabled]="loginForm.invalid">
+            Iniciar sesión
+          </ion-button>
       </div>
 
-
-      <ion-button class="button-login" expand="block" type="submit"  [disabled]="loginForm.invalid">
-        Iniciar sesión
-      </ion-button>
-     
     </form>
 
   </div>

@@ -33,7 +33,12 @@ export class ListadoImagenesComponent implements OnInit {
   constructor(private firestore: Firestore, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
-    this.userId = this.authService.getUserId(); // Get user ID
+
+    console.log("En listado imagenes compnent");
+    
+    console.log((this.images));
+    
+    
   }
 
 
@@ -46,25 +51,25 @@ export class ListadoImagenesComponent implements OnInit {
     // Si la imagen no estaba likeada, tengo que buscar si ya hbaia likeado otra imagen
     if(!image.liked){
 
-      // Verificar si el usuario ya ha dado "like" a alguna imagen
-      const likesQuery = query(
-        collection(this.firestore, `likes-${this.categoria}`),
-        where('userId', '==', this.userId)
-      );
+      // // Verificar si el usuario ya ha dado "like" a alguna imagen
+      // const likesQuery = query(
+      //   collection(this.firestore, `likes-${this.categoria}`),
+      //   where('userId', '==', this.userId)
+      // );
       
-      const likesSnapshot = await getDocs(likesQuery);
-      console.log(likesSnapshot.empty);
+      // const likesSnapshot = await getDocs(likesQuery);
+      // console.log(likesSnapshot.empty);
 
-      if (likesSnapshot.empty == false) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: `El usuario ya ha dado 'me gusta' a otra imagen ${this.categoria}.`,
-          heightAuto: false
-        });
+      // if (likesSnapshot.empty == false) {
+      //   Swal.fire({
+      //     icon: 'error',
+      //     title: 'Error',
+      //     text: `El usuario ya ha dado 'me gusta' a otra imagen ${this.categoria}.`,
+      //     heightAuto: false
+      //   });
 
-        return
-      }
+      //   return
+      // }
 
       await setDoc(likeDocRef, { userId: this.userId, imageId: image.id });
 

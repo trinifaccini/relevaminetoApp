@@ -4,4 +4,5 @@ export interface Image {
     imageName: string;
     userId: string;
     timestamp: Date;
+    userName: string,
   }

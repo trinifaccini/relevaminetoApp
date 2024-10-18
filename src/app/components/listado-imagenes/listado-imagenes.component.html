@@ -1,14 +1,15 @@
 
 <ion-list class="lista-imagenes">
-<ion-item *ngFor="let image of images; let i = index" lines="none" class="custom-item">
+<ion-item *ngFor="let image of images" class="custom-item">
   <div class="imagen-contenedor">
       <ion-thumbnail class="imagen-grande">
-        <img [src]="image.url" alt="Image {{ i + 1 }}">
+        <img [src]="image.url">
       </ion-thumbnail>
       <div class="contenido-debajo" >
         <ion-label style="display: flex; justify-content: space-between;">
-          <h2 style="font-weight: bold;">{{image.imageName}}</h2>
-          <!-- <h2>Me gusta: {{ image.likesCount }}</h2> -->
+          <p style="font-weight: bold;">Usuario: {{image.userName}} - Fecha: {{image.timestamp*1000 | date: 'dd/MM'}}
+          </p>
+          <!-- <h2>Me gusta: {{ image.likesCount }}</h2>  -->
         </ion-label>
         <ion-button fill="clear" (click)="toggleLike(image)">
           <ion-icon [name]="image.liked ? 'heart' : 'heart-outline'"></ion-icon>

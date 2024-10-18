@@ -25,30 +25,33 @@ export class LikesChartComponent implements OnInit {
   constructor(private firestore: Firestore) { }
 
   ngOnInit(): void {
-    this.categoria = this.route.snapshot.paramMap.get('categoria') || '';
-
+    this.categoria = this.route.snapshot.paramMap.get('categoria') || '';    
+    console.log(this.categoria);
+    
     this.loadLikesData();
 
   }
 
   // Cargar los datos de "likes" desde Firestore
   async loadLikesData() {
-    const querySnapshot = await getDocs(collection(this.firestore, 'imagenes-feas'));
+    const querySnapshot = await getDocs(collection(this.firestore, `imagenes-${this.categoria}`));
 
     const imageLabels: string[] = [];   // Nombre o ID de la imagen
     const likesData: number[] = [];     // Cantidad de likes de cada imagen
+    const images: any[] = [];     // Cantidad de likes de cada imagen
 
     querySnapshot.forEach((doc) => {
       const imageData = doc.data();
+      images.push(imageData)
       imageLabels.push(imageData['url']); // Puedes usar el nombre o ID de la imagen
       likesData.push(imageData['likesCount'] || 0); // Contador de "likes"
     });
 
     // Crear el gráfico con los datos obtenidos
-    this.createChart(imageLabels,likesData);
+    this.createChart(imageLabels,likesData, images);
   }
 
-  createChart(labels: string[], data: number[]) {
+  createChart(labels: string[], data: number[], images: any[]) {
     const tipo = this.categoria === 'feas' ? 'bar' : 'pie';
   
     const ctx = document.getElementById('likesChart') as HTMLCanvasElement;
@@ -68,7 +71,7 @@ export class LikesChartComponent implements OnInit {
       onClick: (event: ChartEvent, elements: any[]) => {
         if (elements.length > 0) {
           const index = elements[0].index; // Índice de la imagen seleccionada
-          this.displayImage(labels[index]); // Mostrar la imagen correspondiente
+          this.displayImage(images[index]); // Mostrar la imagen correspondiente
         }
       }
     };
@@ -115,10 +118,14 @@ export class LikesChartComponent implements OnInit {
       options: options
     });
   }
+
+
 // Función para mostrar la imagen
-displayImage(imageLabel: string): void {
+displayImage(image: any): void {
   // Asume que las imágenes tienen nombres relacionados con las etiquetas
-  this.selectedImage = imageLabel 
+  console.log(image);
+  
+  this.selectedImage = image 
 }
 }
   

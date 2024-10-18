@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild, inject} from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild, inject} from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, RouterModule, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
@@ -27,7 +27,7 @@ import { Firestore, doc, getDoc, getDocs, collection, orderBy, query } from '@an
 })
 
 
-export class SubidaPage implements OnInit, OnDestroy {
+export class SubidaPage implements OnInit {
 
   router = inject(Router)
   route = inject(ActivatedRoute)
@@ -37,44 +37,49 @@ export class SubidaPage implements OnInit, OnDestroy {
   categoria: string;
   mostrarUserId: boolean = false;
   userId: string;
-  loading: boolean = true;
+  loading: boolean = false;
 
-  constructor(private firestore: Firestore, ) {}
-
+  constructor(private firestore: Firestore, private cd: ChangeDetectorRef) {}
 
   async loadImages() {
-    this.images = [];  // Reiniciar el array de imágenes
-    this.images = [];  // Reiniciar el array de imágenes
-    
-    const imagesCollection = collection(this.firestore, `imagenes-${this.categoria}`);
+    if (this.loading) {
+      return; // Evita duplicaciones si ya está cargando
+    }
 
-    // Consulta para ordenar por timestamp de manera descendente (más reciente primero)
-    const q = query(imagesCollection, orderBy('timestamp', 'desc'));
+    this.loading = true;
+    this.images = [];  // Reiniciar el array de imágenes
 
-    const snapshotTodas = await getDocs(q);
-    for (const imageDoc of snapshotTodas.docs) {
+      const imagesCollection = collection(this.firestore, `imagenes-${this.categoria}`);
+      console.log("Colección de imágenes:", imagesCollection);
+
+      const q = query(imagesCollection, orderBy('timestamp', 'desc'));
+      const snapshotTodas = await getDocs(q);
+      console.log("Resultados de la query:", snapshotTodas);
+          for (const imageDoc of snapshotTodas.docs) {
       const imageData = imageDoc.data();
       const likeDocRef = doc(this.firestore, `likes-${this.categoria}/${this.userId}_${imageDoc.id}`);
       const likeDocSnap = await getDoc(likeDocRef);
 
-      // Add image to the array
       this.images.push({
         id: imageDoc.id,
         url: imageData['url'],
         liked: likeDocSnap.exists(),
         likesCount: imageData['likesCount'] || 0,
-        imageName: imageData['imageName']
+        imageName: imageData['imageName'],
+        userName: imageData['userName'],
+        timestamp: imageData['timestamp']
       });
-
-      this.loading = false;
-
     }
 
+    // Forzar la detección de cambios
+    this.cd.detectChanges();
+
+    console.log(this.images);
+
     this.loading = false;
-
-
   }
 
+ 
 
   ngOnInit() {
     console.log('On init SUBIDA PAGE');
@@ -82,26 +87,18 @@ export class SubidaPage implements OnInit, OnDestroy {
     this.categoria = this.route.snapshot.paramMap.get('categoria') || '';
   }
 
-  ngOnDestroy() {
-    console.log('On destroy SUBIDA PAGE');
-    this.loading = true;
-    this.images = []
-  }
-
 
   ionViewWillEnter() {
 
     console.log('On VIEW WILL ENTER SUBIDA PAGE');
-
-    setTimeout(() => {
-      this.loadImages();
-    }, 3000);  // 3 segundos de retraso
+    this.loadImages();
+    
   }
 
   ionViewDidLeave() {
 
     console.log('On VIEW WILL LEAVE SUBIDA PAGE');
-    this.loading = true;
+    this.loading = false;
     this.images = []
     
   }
