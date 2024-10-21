@@ -23,8 +23,7 @@ interface Image {
 
 export class ListadoImagenesComponent implements OnInit {
   
-  @Input() mostrarUserId: boolean = false;
-  userId: string | null = null;
+  @Input() userId: string | null = null;
   @Input() categoria: string = 'feas'; 
   @Input() images: any[] = []; 
 

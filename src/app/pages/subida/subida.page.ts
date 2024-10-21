@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild, inject} from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild, inject} from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, RouterModule, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
@@ -24,6 +24,7 @@ import { Firestore, doc, getDoc, getDocs, collection, orderBy, query } from '@an
   ],
   templateUrl: './subida.page.html',
   styleUrl: './subida.page.css',
+  schemas:[CUSTOM_ELEMENTS_SCHEMA]
 })
 
 
@@ -35,7 +36,6 @@ export class SubidaPage implements OnInit {
 
   images: any[] = [];
   categoria: string;
-  mostrarUserId: boolean = false;
   userId: string;
   loading: boolean = false;
 

@@ -37,7 +37,7 @@
       <p *ngIf="loading">Cargando imagenes</p>
       <p *ngIf="loading == false && images.length === 0">No hay imagenes subidas</p>
 
-      <listado-imagenes [categoria]="categoria" [mostrarUserId]="mostrarUserId" [images]="images">
+      <listado-imagenes [categoria]="categoria" [images]="images" [userId]="userId">
       </listado-imagenes>
 
     </div>

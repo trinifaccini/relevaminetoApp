@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject} from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef, Component, OnDestroy, OnInit, inject} from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
@@ -19,6 +19,7 @@ import { Firestore, doc, getDoc, getDocs, collection, query, orderBy, where } fr
   ],
   templateUrl: 'listado-imagenes.page.html',
   styleUrls: ['listado-imagenes.page.css'],
+  schemas:[CUSTOM_ELEMENTS_SCHEMA]
 })
 
 
@@ -30,7 +31,6 @@ export class ListadoImagenesPage implements OnInit {
 
   images: any[] = [];
   categoria: string;
-  mostrarUserId: boolean = true;
   userId: string;
   loading: boolean = false;
 
@@ -82,16 +82,21 @@ export class ListadoImagenesPage implements OnInit {
       const imageData = imageDoc.data();
       const likeDocRef = doc(this.firestore, `likes-${this.categoria}/${this.userId}_${imageDoc.id}`);
       const likeDocSnap = await getDoc(likeDocRef);
+      
+      if(this.userId == imageData['userId']){
+        this.images.push({
+          id: imageDoc.id,
+          url: imageData['url'],
+          liked: likeDocSnap.exists(),
+          likesCount: imageData['likesCount'] || 0,
+          imageName: imageData['imageName'],
+          userName: imageData['userName'],
+          timestamp: imageData['timestamp']
+        });
 
-      this.images.push({
-        id: imageDoc.id,
-        url: imageData['url'],
-        liked: likeDocSnap.exists(),
-        likesCount: imageData['likesCount'] || 0,
-        imageName: imageData['imageName'],
-        userName: imageData['userName'],
-        timestamp: imageData['timestamp']
-      });
+      }
+
+      
     }
 
 
